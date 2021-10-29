@@ -8,10 +8,14 @@ import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec3;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.location.RelativeVec;
+
+import java.util.List;
+import java.util.Locale;
 
 public class TeleportCommand extends Command {
 
@@ -47,7 +51,17 @@ public class TeleportCommand extends Command {
             return;
         }
 
-        player.teleport(entity.getPosition());
+        Component name;
+
+        if (entity instanceof Player entityPlayer) name = entityPlayer.getName();
+        else if (entity.getCustomName() != null) name = entity.getEntityMeta().getCustomName();
+        else name = Component.translatable(entity.getEntityType().registry().translationKey());
+
+        player.teleport(entity.getPosition()).whenComplete((unused, throwable) -> player.sendMessage(Component.translatable(
+                "commands.teleport.success.entity.single",
+                player.getName(),
+                name
+        )));
     }
 
     private void executeLocation(CommandSender sender, CommandContext context) {
@@ -58,7 +72,14 @@ public class TeleportCommand extends Command {
             return;
         }
 
-        player.teleport(destination.from(player).asPosition().withPitch(player.getPosition().pitch()).withYaw(player.getPosition().yaw()));
+        Pos position = destination.from(player).asPosition().withPitch(player.getPosition().pitch()).withYaw(player.getPosition().yaw());
+        player.teleport(position).whenComplete((unused, throwable) -> player.sendMessage(Component.translatable(
+                "commands.teleport.success.location.single",
+                player.getName(),
+                Component.text(String.format(Locale.ROOT, "%f", position.x())),
+                Component.text(String.format(Locale.ROOT, "%f", position.y())),
+                Component.text(String.format(Locale.ROOT, "%f", position.z()))
+        )));
     }
 
     private void executeTargetsDestination(CommandSender sender, CommandContext context) {
@@ -71,17 +92,36 @@ public class TeleportCommand extends Command {
             return;
         }
 
-        targets.find(sender).forEach(target -> {
-            target.teleport(entity.getPosition());
-        });
+        List<Entity> entityList = targets.find(sender);
+        entityList.forEach(target -> target.teleport(entity.getPosition()));
+
+        Component name;
+
+        if (entity instanceof Player entityPlayer) name = entityPlayer.getName();
+        else if (entity.getCustomName() != null) name = entity.getEntityMeta().getCustomName();
+        else name = Component.translatable(entity.getEntityType().registry().translationKey());
+
+        sender.sendMessage(Component.translatable(
+                "commands.teleport.success.entity.multiple",
+                Component.text(entityList.size()),
+                name
+        ));
     }
 
     private void executeTargetsLocation(CommandSender sender, CommandContext context) {
         EntityFinder targets = context.get("targets");
         RelativeVec location = context.get("location");
 
-        targets.find(sender).forEach(target -> {
-            target.teleport(location.fromSender(sender).asPosition());
-        });
+        List<Entity> entityList = targets.find(sender);
+        Pos position = location.fromSender(sender).asPosition();
+        entityList.forEach(target -> target.teleport(position));
+
+        sender.sendMessage(Component.translatable(
+                "commands.teleport.success.location.multiple",
+                Component.text(entityList.size()),
+                Component.text(String.format(Locale.ROOT, "%f", position.x())),
+                Component.text(String.format(Locale.ROOT, "%f", position.y())),
+                Component.text(String.format(Locale.ROOT, "%f", position.z()))
+        ));
     }
 }
