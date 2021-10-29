@@ -8,6 +8,7 @@ version '0.1.0'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 
     // Sponge
     maven {
@@ -18,10 +19,20 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+
+    // Minecraft
+    maven {
+        url 'https://libraries.minecraft.net'
+        content {
+            includeGroupByRegex "com\\.mojang.*"
+        }
+    }
 }
 
 dependencies {
     implementation 'com.github.Minestom:Minestom:-SNAPSHOT'
+    implementation 'com.mojang:brigadier:1.0.18'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }

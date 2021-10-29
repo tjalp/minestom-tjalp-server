@@ -8,6 +8,7 @@ import net.minestom.server.instance.ChunkPopulator;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.world.biomes.Biome;
+import net.tjalp.minestom.backend.registry.TjalpBiome;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class SimpleGenerator implements ChunkGenerator {
 
     @Override
     public void fillBiomes(@NotNull Biome[] biomes, int chunkX, int chunkZ) {
-        Arrays.fill(biomes, Biome.PLAINS);
+        Arrays.fill(biomes, TjalpBiome.PLAINS);
     }
 
     @Override
