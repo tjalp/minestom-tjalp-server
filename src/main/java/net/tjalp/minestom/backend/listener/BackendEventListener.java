@@ -9,14 +9,12 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.event.player.PlayerBlockPlaceEvent;
-import net.minestom.server.event.player.PlayerCommandEvent;
-import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.item.ItemStack;
@@ -44,6 +42,7 @@ public class BackendEventListener {
         node.addListener(ItemDropEvent.class, this::onItemDrop);
         node.addListener(PickupItemEvent.class, this::onPickupItem);
         node.addListener(PlayerCommandEvent.class, this::onCommand);
+        node.addListener(PlayerSkinInitEvent.class, this::onPlayerSkinInit);
     }
 
     private void onPlayerLogin(PlayerLoginEvent event) {
@@ -125,5 +124,9 @@ public class BackendEventListener {
             player.sendMessage(Component.text("That command does not exist!").color(NamedTextColor.RED));
             event.setCancelled(true);
         }
+    }
+
+    private void onPlayerSkinInit(PlayerSkinInitEvent event) {
+        event.setSkin(PlayerSkin.fromUsername(event.getPlayer().getUsername()));
     }
 }

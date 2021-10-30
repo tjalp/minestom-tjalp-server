@@ -1,13 +1,15 @@
 package net.tjalp.minestom.backend;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
-import net.minestom.server.extras.MojangAuth;
-import net.minestom.server.extras.lan.OpenToLAN;
-import net.minestom.server.extras.lan.OpenToLANConfig;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.tjalp.minestom.backend.command.GamemodeCommand;
+import net.tjalp.minestom.backend.command.SkinCommand;
 import net.tjalp.minestom.backend.command.StopCommand;
 import net.tjalp.minestom.backend.command.TeleportCommand;
 import net.tjalp.minestom.backend.generator.SimpleGenerator;
@@ -19,6 +21,13 @@ public class BackendServer {
 
     /** The static server instance, there should only be one */
     private static BackendServer instance;
+
+    public static void main(String[] args) {
+        BackendServer server = new BackendServer();
+
+        // Initialize the BackendServer
+        server.init();
+    }
 
     /**
      * Get the server that is currently running
@@ -43,7 +52,7 @@ public class BackendServer {
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
         // Enable Mojang authentication
-        MojangAuth.init();
+        //MojangAuth.init();
 
         // Register the main listener
         new BackendEventListener();
@@ -53,7 +62,9 @@ public class BackendServer {
         TjalpDimension.registerDimensions();
         TjalpBiome.registerBiomes();
 
-        MinecraftServer.setChunkViewDistance(10);
+        // Set some useful values
+        //MinecraftServer.setChunkViewDistance(10);
+        MinecraftServer.setBrandName("tjalp");
 
         // Create the instance
         overworld = instanceManager.createInstanceContainer(TjalpDimension.OVERWORLD);
@@ -80,6 +91,7 @@ public class BackendServer {
         CommandManager man = MinecraftServer.getCommandManager();
 
         man.register(new GamemodeCommand());
+        man.register(new SkinCommand());
         man.register(new StopCommand());
         man.register(new TeleportCommand());
     }
