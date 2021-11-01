@@ -1,7 +1,7 @@
 .gradle
 /build/
 .idea
-/extensions/
+extensions
 
 # Ignore Gradle GUI config
 gradle-app.setting
