@@ -2,6 +2,7 @@ package net.tjalp.minestom.backend;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
+import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
 import net.tjalp.minestom.backend.command.GamemodeCommand;
@@ -62,6 +63,9 @@ public class BackendServer {
         //MinecraftServer.setChunkViewDistance(10);
         MinecraftServer.setBrandName("tjalp");
 
+        // Enable Velocity proxy
+        VelocityProxy.enable("OpkUJU3FGM3I");
+
         // Create the instance
         overworld = instanceManager.createInstanceContainer(TjalpDimension.OVERWORLD);
         overworld.setChunkGenerator(new SimpleGenerator());
@@ -70,7 +74,7 @@ public class BackendServer {
         MinecraftServer.getSchedulerManager().buildShutdownTask(this::shutdown).schedule();
 
         // Start the server
-        server.start("0.0.0.0", 25565);
+        server.start("0.0.0.0", 25000);
     }
 
     /**

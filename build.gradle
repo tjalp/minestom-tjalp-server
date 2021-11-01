@@ -1,5 +1,5 @@
-group 'net.tjalp.minestom'
-version '0.1.0'
+group = project.minestom_group
+version = project.minestom_version
 
 buildscript {
     repositories {
@@ -30,10 +30,20 @@ subprojects {
         maven {
             url 'https://jitpack.io'
         }
+
+        // Velocity
+        maven {
+            url 'https://nexus.velocitypowered.com/repository/maven-public/'
+        }
     }
 
     dependencies {
 
+    }
+
+    shadowJar {
+        archiveClassifier.set('')
+        archiveVersion.set('')
     }
 
     jar {

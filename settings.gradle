@@ -2,4 +2,5 @@ rootProject.name = 'minestom-tjalp-server'
 
 // --- Project Modules ---
 include(':libraries')
+include(':proxy')
 include(':backend')
