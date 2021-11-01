@@ -1,4 +1,5 @@
 dependencies {
+    implementation project(':libraries')
     compileOnly "com.velocitypowered:velocity-api:${project.lib_velocity_version}"
 
     annotationProcessor "com.velocitypowered:velocity-api:${project.lib_velocity_version}"

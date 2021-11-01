@@ -5,7 +5,11 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
+import net.tjalp.minestom.proxy.listener.ProxyEventListener;
 import org.slf4j.Logger;
+
+import java.net.InetSocketAddress;
 
 @Plugin(
         id = "tjalp",
@@ -47,9 +51,29 @@ public class Proxy {
      *
      */
 
-
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        logger.info("Hello world!");
+
+        // Register listeners
+        proxy.getEventManager().register(this, new ProxyEventListener(this));
+
+        logger.info("Registered listeners");
+
+        // Register active servers
+        registerServer("minestom", "127.0.0.1", 25000);
+
+        logger.info("Registered active servers");
+    }
+
+    /**
+     * Register a server globally (on all proxies)
+     *
+     * @param id the server id to use
+     * @param address the target server address
+     * @param port the target server port
+     */
+    private void registerServer(String id, String address, int port) {
+        InetSocketAddress inet = new InetSocketAddress(address, port);
+        proxy.registerServer(new ServerInfo(id, inet));
     }
 }
