@@ -1,0 +1,8 @@
+group 'net.tjalp.minestom'
+version '1.0.0'
+
+dependencies {
+    implementation project(':libraries')
+
+    implementation 'com.github.Minestom:Minestom:-SNAPSHOT'
+}

@@ -1,49 +1,45 @@
-plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
-    id 'java'
-}
-
 group 'net.tjalp.minestom'
 version '0.1.0'
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-
-    // Sponge
-    maven {
-        url 'https://repo.spongepowered.org/maven'
-    }
-
-    // Jitpack
-    maven {
-        url 'https://jitpack.io'
-    }
-
-    // Minecraft
-    maven {
-        url 'https://libraries.minecraft.net'
-        content {
-            includeGroupByRegex "com\\.mojang.*"
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
         }
     }
-}
 
-dependencies {
-    implementation 'com.github.Minestom:Minestom:-SNAPSHOT'
-    implementation 'com.mojang:brigadier:1.0.18'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'net.tjalp.minestom.backend.Bootstrap',
-                'Multi-Release': true
+    dependencies {
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.0"
     }
 }
 
-test {
-    useJUnitPlatform()
+subprojects {
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+
+        // Sponge
+        maven {
+            url 'https://repo.spongepowered.org/maven'
+        }
+
+        // Jitpack
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+
+    dependencies {
+
+    }
+
+    jar {
+        manifest {
+            attributes 'Main-Class': 'net.tjalp.minestom.backend.Bootstrap',
+                    'Multi-Release': true
+        }
+    }
 }
