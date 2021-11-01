@@ -1,9 +1,5 @@
 package net.tjalp.minestom.backend;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.instance.Instance;
@@ -71,7 +67,7 @@ public class BackendServer {
         overworld.setChunkGenerator(new SimpleGenerator());
 
         // Specify a shutdownTask
-        MinecraftServer.getSchedulerManager().buildShutdownTask(this::shutdown);
+        MinecraftServer.getSchedulerManager().buildShutdownTask(this::shutdown).schedule();
 
         // Start the server
         server.start("0.0.0.0", 25565);
@@ -81,7 +77,7 @@ public class BackendServer {
      * Do some stuff on shutdown
      */
     public void shutdown() {
-        System.out.println("Noticed that the server is shutting down");
+        MinecraftServer.LOGGER.info("Noticed that the server is shutting down");
     }
 
     /**
