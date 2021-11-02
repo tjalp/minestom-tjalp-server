@@ -61,7 +61,7 @@ public class AppleServer {
 
         // Set some useful values
         //MinecraftServer.setChunkViewDistance(10);
-        MinecraftServer.setBrandName("tjalp");
+        MinecraftServer.setBrandName("apple");
 
         // Enable Velocity proxy
         VelocityProxy.enable("OpkUJU3FGM3I"); // TODO should probably make this secured & private
