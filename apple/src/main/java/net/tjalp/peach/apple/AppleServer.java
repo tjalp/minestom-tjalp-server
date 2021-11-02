@@ -64,7 +64,7 @@ public class AppleServer {
         MinecraftServer.setBrandName("tjalp");
 
         // Enable Velocity proxy
-        VelocityProxy.enable("OpkUJU3FGM3I");
+        VelocityProxy.enable("OpkUJU3FGM3I"); // TODO should probably make this secured & private
 
         // Create the instance
         overworld = instanceManager.createInstanceContainer(TjalpDimension.OVERWORLD);
