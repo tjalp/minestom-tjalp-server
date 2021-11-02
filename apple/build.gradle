@@ -6,7 +6,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'net.tjalp.peach.apple.Bootstrap',
+        attributes 'Main-Class': 'net.tjalp.peach.apple.LaunchServer',
                 'Multi-Release': true
     }
 }

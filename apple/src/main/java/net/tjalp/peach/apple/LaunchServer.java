@@ -1,6 +1,8 @@
 package net.tjalp.peach.apple;
 
-public class Bootstrap {
+import net.minestom.server.Bootstrap;
+
+public class LaunchServer {
 
     public static void main(String[] args) {
 
@@ -10,6 +12,6 @@ public class Bootstrap {
 //        argsWithMixins[argsWithMixins.length-2] = "--mixin";
 //        argsWithMixins[argsWithMixins.length-1] = "mixins.tjalp.json";
 
-        net.minestom.server.Bootstrap.bootstrap(AppleServer.class.getName(), args);
+        Bootstrap.bootstrap(AppleServer.class.getName(), args);
     }
 }
