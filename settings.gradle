@@ -2,5 +2,6 @@ rootProject.name = 'peach'
 
 // --- Project Modules ---
 include(':peel')
+include(':pumpkin')
 include(':melon')
 include(':apple')

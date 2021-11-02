@@ -1,0 +1,12 @@
+dependencies {
+    implementation project(':peel')
+
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:${project.lib_slf4j_version}"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'net.tjalp.peach.pumpkin.Pumpkin',
+                'Multi-Release': true
+    }
+}
