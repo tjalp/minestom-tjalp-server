@@ -1,6 +1,6 @@
-rootProject.name = 'minestom-tjalp-server'
+rootProject.name = 'peach'
 
 // --- Project Modules ---
-include(':libraries')
-include(':proxy')
-include(':backend')
+include(':peel')
+include(':melon')
+include(':apple')
