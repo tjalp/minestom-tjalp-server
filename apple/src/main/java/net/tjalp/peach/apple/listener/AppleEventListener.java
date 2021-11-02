@@ -16,6 +16,7 @@ import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.server.ServerListPingEvent;
+import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.packet.server.ServerPacket;
@@ -127,6 +128,6 @@ public class AppleEventListener {
     }
 
     private void onPlayerSkinInit(PlayerSkinInitEvent event) {
-        event.setSkin(PlayerSkin.fromUsername(event.getPlayer().getUsername()));
+        if (!VelocityProxy.isEnabled()) event.setSkin(PlayerSkin.fromUsername(event.getPlayer().getUsername()));
     }
 }
