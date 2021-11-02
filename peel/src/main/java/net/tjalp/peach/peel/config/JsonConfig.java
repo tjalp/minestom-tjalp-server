@@ -2,9 +2,7 @@ package net.tjalp.peach.peel.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,9 +14,9 @@ import java.nio.file.Files;
  */
 public class JsonConfig<T> implements Configurable {
 
-    private File file;
-    private Class<T> type;
-    private Gson gson;
+    private final File file;
+    private final Class<T> type;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private T data;
 
     public JsonConfig(File file, Class<T> type) {
@@ -62,7 +60,7 @@ public class JsonConfig<T> implements Configurable {
      * @param output The output file, null for the input file
      */
     private void save(File output) {
-        String json = new GsonBuilder().setPrettyPrinting().create().toJson(data);
+        String json = gson.toJson(data);
         File outFile = output != null ? output : file;
 
         try {
@@ -73,5 +71,14 @@ public class JsonConfig<T> implements Configurable {
         }
 
         if (data instanceof Configurable) ((Configurable) data).onSave();
+    }
+
+    /**
+     * Get the data of the [JsonConfig]
+     *
+     * @return the class of the JsonConfig
+     */
+    public T data() {
+        return this.data;
     }
 }

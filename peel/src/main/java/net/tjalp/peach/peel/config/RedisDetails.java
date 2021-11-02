@@ -6,7 +6,7 @@ package net.tjalp.peach.peel.config;
 public class RedisDetails implements Configurable {
 
     /** The target address for redis */
-    public String address = "127.0.0.1";
+    public String server = "127.0.0.1";
 
     /** The target port for redis */
     public int port = 6379;

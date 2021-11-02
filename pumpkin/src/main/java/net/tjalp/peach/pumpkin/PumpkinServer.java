@@ -1,10 +1,13 @@
 package net.tjalp.peach.pumpkin;
 
+import net.tjalp.peach.peel.config.JsonConfig;
 import net.tjalp.peach.peel.database.RedisManager;
 import net.tjalp.peach.peel.util.Check;
+import net.tjalp.peach.pumpkin.config.PumpkinConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -12,9 +15,18 @@ import java.util.Scanner;
  */
 public class PumpkinServer {
 
+    private static PumpkinServer instance;
+
+    public static PumpkinServer get() {
+        return PumpkinServer.instance;
+    }
+
     private Logger logger;
     private boolean initialized = false;
     private boolean isRunning = false;
+
+    /** The pumpkin config */
+    private JsonConfig<PumpkinConfig> config;
 
     /** The redis manager service */
     private RedisManager redis;
@@ -22,8 +34,14 @@ public class PumpkinServer {
     /**
      * Initialize the PumpkinServer
      */
-    public void init() {
+    public void init(File configFile) {
         this.logger = LoggerFactory.getLogger(PumpkinServer.class);
+        this.config = new JsonConfig<>(configFile, PumpkinConfig.class);
+
+        // Redis
+        System.setProperty("redisAddress", config().redis.server);
+        System.setProperty("redisPort", String.valueOf(config().redis.port));
+        System.setProperty("redisPassword", config().redis.password);
 
         // Initialize various services
         this.redis = new RedisManager(logger);
@@ -57,5 +75,9 @@ public class PumpkinServer {
 
     public RedisManager redis() {
         return this.redis;
+    }
+
+    public PumpkinConfig config() {
+        return this.config.data();
     }
 }
