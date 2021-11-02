@@ -69,6 +69,16 @@ public class PumpkinServer {
         }
     }
 
+    /**
+     * Shut down the PumpkinServer
+     */
+    public void shutdown() {
+
+        logger.info("Shutting down services");
+
+        redis().dispose();
+    }
+
     public Logger logger() {
         return this.logger;
     }
