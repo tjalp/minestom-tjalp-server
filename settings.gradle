@@ -1,7 +1,7 @@
 rootProject.name = 'peach'
 
 // --- Project Modules ---
-include(':peel')
-include(':pumpkin')
-include(':melon')
-include(':apple')
+include(':peel') // The shared libraries
+include(':pumpkin') // The master process handling all the data
+include(':melon') // The Minecraft proxy
+include(':apple') // The backend (Minestom) server
