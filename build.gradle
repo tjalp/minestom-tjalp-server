@@ -1,5 +1,5 @@
-group = project.minestom_group
-version = project.minestom_version
+group = project.peach_group
+version = project.peach_version
 
 buildscript {
     repositories {

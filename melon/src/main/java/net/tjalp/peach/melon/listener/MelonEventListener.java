@@ -1,9 +1,9 @@
-package net.tjalp.minestom.proxy.listener;
+package net.tjalp.peach.melon.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import net.tjalp.minestom.proxy.MelonServer;
+import net.tjalp.peach.melon.MelonServer;
 
 import java.util.Optional;
 
@@ -17,7 +17,7 @@ public class MelonEventListener {
 
     @Subscribe
     private void onPlayerChooseInitialServer(PlayerChooseInitialServerEvent event) {
-        Optional<RegisteredServer> server = melonServer.proxy().getServer("minestom");
+        Optional<RegisteredServer> server = melonServer.proxy().getServer("apple");
 
         if (server.isPresent()) {
             event.setInitialServer(server.get());

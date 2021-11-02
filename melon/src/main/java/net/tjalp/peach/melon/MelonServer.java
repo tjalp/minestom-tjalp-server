@@ -1,4 +1,4 @@
-package net.tjalp.minestom.proxy;
+package net.tjalp.peach.melon;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -6,7 +6,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
-import net.tjalp.minestom.proxy.listener.MelonEventListener;
+import net.tjalp.peach.melon.listener.MelonEventListener;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -60,7 +60,7 @@ public class MelonServer {
         logger.info("Registered listeners");
 
         // Register active servers
-        registerServer("minestom", "127.0.0.1", 25000);
+        registerServer("apple", "127.0.0.1", 25000);
 
         logger.info("Registered active servers");
     }

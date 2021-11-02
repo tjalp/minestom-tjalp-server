@@ -6,7 +6,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'net.tjalp.minestom.backend.Bootstrap',
+        attributes 'Main-Class': 'net.tjalp.peach.apple.Bootstrap',
                 'Multi-Release': true
     }
 }
