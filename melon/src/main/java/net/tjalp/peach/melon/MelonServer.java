@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import java.net.InetSocketAddress;
 
 @Plugin(
-        id = "tjalp",
-        name = "tjalp proxy",
+        id = "melon",
+        name = "Melon",
         description = "The proxy plugin needed for tjalp's network",
         version = "0.1.0",
         url = "https://tjalp.net/",
