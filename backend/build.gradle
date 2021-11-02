@@ -3,3 +3,10 @@ dependencies {
 
     implementation "com.github.Minestom:Minestom:${project.lib_minestom_version}"
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'net.tjalp.minestom.backend.Bootstrap',
+                'Multi-Release': true
+    }
+}

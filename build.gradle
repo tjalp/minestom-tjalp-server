@@ -45,11 +45,4 @@ subprojects {
         archiveClassifier.set('')
         archiveVersion.set('')
     }
-
-    jar {
-        manifest {
-            attributes 'Main-Class': 'net.tjalp.minestom.backend.Bootstrap',
-                    'Multi-Release': true
-        }
-    }
 }
