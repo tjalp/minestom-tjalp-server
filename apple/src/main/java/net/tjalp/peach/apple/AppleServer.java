@@ -13,6 +13,8 @@ import net.tjalp.peach.apple.generator.SimpleGenerator;
 import net.tjalp.peach.apple.listener.AppleEventListener;
 import net.tjalp.peach.apple.registry.TjalpBiome;
 import net.tjalp.peach.apple.registry.TjalpDimension;
+import net.tjalp.peach.peel.database.RedisManager;
+import net.tjalp.peach.peel.util.Check;
 
 public class AppleServer {
 
@@ -35,6 +37,9 @@ public class AppleServer {
         return instance;
     }
 
+    /** The redis manager service */
+    private RedisManager redis;
+
     /** The main instance which is loaded at all times */
     public Instance overworld = null;
 
@@ -47,6 +52,9 @@ public class AppleServer {
         // Initialize the Minecraft server
         MinecraftServer server = MinecraftServer.init();
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
+
+        // Initialize various services
+        redis = new RedisManager(MinecraftServer.LOGGER);
 
         // Enable Mojang authentication
         //MojangAuth.init();
@@ -78,10 +86,16 @@ public class AppleServer {
     }
 
     /**
-     * Do some stuff on shutdown
+     * Initiate the shutdown sequence
+     * To shut down the server, use
+     * MinecraftServer.stopCleanly()
      */
-    public void shutdown() {
-        MinecraftServer.LOGGER.info("Noticed that the server is shutting down");
+    private void shutdown() {
+        Check.stateCondition(MinecraftServer.isStopping(), "Cannot shut down the server if it's already stopping!");
+
+        MinecraftServer.LOGGER.info("Shutting down services...");
+
+        redis().dispose();
     }
 
     /**
@@ -94,5 +108,14 @@ public class AppleServer {
         man.register(new SkinCommand());
         man.register(new StopCommand());
         man.register(new TeleportCommand());
+    }
+
+    /**
+     * Get the redis manager
+     *
+     * @return the redis manager
+     */
+    public RedisManager redis() {
+        return this.redis;
     }
 }

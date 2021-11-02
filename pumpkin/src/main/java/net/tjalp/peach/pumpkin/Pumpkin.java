@@ -9,6 +9,6 @@ public class Pumpkin {
 
         server.init(new File("config.json"));
 
-        server.start("0.0.0.0", 37474);
+        server.start("0.0.0.0", 34040);
     }
 }
