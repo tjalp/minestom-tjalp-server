@@ -6,7 +6,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'net.tjalp.peach.apple.green.MinestomAppleServer',
+        attributes 'Main-Class': 'net.tjalp.peach.apple.green.LaunchServer',
                 'Multi-Release': true
     }
 }
