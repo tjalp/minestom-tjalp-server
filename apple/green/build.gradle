@@ -1,9 +1,7 @@
 dependencies {
-    implementation project(':peel')
-    implementation project(':apple:pit')
+    api project(':apple:pit')
 
     implementation "com.github.Minestom:Minestom:${project.lib_minestom_version}"
-    implementation "io.lettuce:lettuce-core:${project.lib_lettuce_version}"
 }
 
 jar {
