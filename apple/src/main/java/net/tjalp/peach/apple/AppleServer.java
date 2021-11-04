@@ -14,7 +14,6 @@ import net.tjalp.peach.apple.listener.AppleEventListener;
 import net.tjalp.peach.apple.registry.TjalpBiome;
 import net.tjalp.peach.apple.registry.TjalpDimension;
 import net.tjalp.peach.peel.database.RedisManager;
-import net.tjalp.peach.peel.util.Check;
 
 public class AppleServer {
 
@@ -54,7 +53,7 @@ public class AppleServer {
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
         // Initialize various services
-        redis = new RedisManager(MinecraftServer.LOGGER);
+        //redis = new RedisManager(MinecraftServer.LOGGER);
 
         // Enable Mojang authentication
         //MojangAuth.init();
@@ -91,11 +90,9 @@ public class AppleServer {
      * MinecraftServer.stopCleanly()
      */
     private void shutdown() {
-        Check.stateCondition(MinecraftServer.isStopping(), "Cannot shut down the server if it's already stopping!");
-
         MinecraftServer.LOGGER.info("Shutting down services...");
 
-        redis().dispose();
+        //redis().dispose();
     }
 
     /**

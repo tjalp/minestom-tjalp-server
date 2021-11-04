@@ -20,6 +20,7 @@ import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.packet.server.ServerPacket;
+import net.minestom.server.network.packet.server.play.BlockChangePacket;
 import net.minestom.server.network.packet.server.play.EffectPacket;
 import net.minestom.server.ping.ResponseData;
 import net.minestom.server.utils.PacketUtils;
@@ -71,7 +72,7 @@ public class AppleEventListener {
     }
 
     private void onPlayerBlockBreak(PlayerBlockBreakEvent event) {
-        ServerPacket packet = new EffectPacket(
+        ServerPacket effectPacket = new EffectPacket(
                 2001,
                 event.getBlockPosition(),
                 event.getBlock().stateId(),
@@ -80,7 +81,7 @@ public class AppleEventListener {
 
         Chunk chunk = event.getInstance().getChunkAt(event.getBlockPosition());
 
-        PacketUtils.sendGroupedPacket(chunk.getViewers(), packet, viewer -> !viewer.equals(event.getPlayer()));
+        PacketUtils.sendGroupedPacket(chunk.getViewers(), effectPacket, viewer -> !viewer.equals(event.getPlayer()));
     }
 
     private void onPlayerBlockPlace(PlayerBlockPlaceEvent event) {
