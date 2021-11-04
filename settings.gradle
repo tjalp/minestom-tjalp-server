@@ -4,4 +4,6 @@ rootProject.name = 'peach'
 include(':peel') // The shared libraries
 include(':pumpkin') // The master process handling all the data
 include(':melon') // The Minecraft proxy
-include(':apple') // The backend (Minestom) server
+include(':apple:pit') // The shared interface between backend servers
+include(':apple:green') // The backend (Minestom) server
+include(':apple:red') // The backend (Paper) server

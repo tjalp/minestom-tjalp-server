@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':peel')
+    implementation project(':apple:pit')
+
+    compileOnly "io.papermc.paper:paper-api:${project.lib_paper_version}"
+    implementation "io.lettuce:lettuce-core:${project.lib_lettuce_version}"
+}

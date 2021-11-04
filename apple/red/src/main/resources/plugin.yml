@@ -1,0 +1,5 @@
+name: apple
+main: net.tjalp.peach.apple.red.PaperAppleServer
+version: 0.1.0
+api-version: 1.17
+authors: [tjalp]

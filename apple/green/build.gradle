@@ -1,0 +1,14 @@
+dependencies {
+    implementation project(':peel')
+    implementation project(':apple:pit')
+
+    implementation "com.github.Minestom:Minestom:${project.lib_minestom_version}"
+    implementation "io.lettuce:lettuce-core:${project.lib_lettuce_version}"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'net.tjalp.peach.apple.LaunchServer',
+                'Multi-Release': true
+    }
+}

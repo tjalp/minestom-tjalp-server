@@ -35,6 +35,11 @@ subprojects {
         maven {
             url 'https://nexus.velocitypowered.com/repository/maven-public/'
         }
+
+        // Paper
+        maven {
+            url 'https://papermc.io/repo/repository/maven-public/'
+        }
     }
 
     dependencies {
