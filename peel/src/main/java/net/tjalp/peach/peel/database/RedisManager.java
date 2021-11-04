@@ -3,6 +3,7 @@ package net.tjalp.peach.peel.database;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import net.tjalp.peach.peel.config.RedisDetails;
 import org.slf4j.Logger;
 import reactor.core.Disposable;
 
@@ -18,16 +19,19 @@ public class RedisManager implements Disposable {
     private StatefulRedisPubSubConnection<String, String> publish;
 
     public RedisManager(Logger logger) {
+        this(logger, "localhost", 6379, "");
+    }
+
+    public RedisManager(Logger logger, RedisDetails details) {
+        this(logger, details.server, details.port, details.password);
+    }
+
+    public RedisManager(Logger logger, String address, int port, String password) {
         this.logger = logger;
 
         logger.info("Initializing Redis Manager...");
 
         long startTime = System.currentTimeMillis();
-
-        // Set the jvm properties for Redis
-        String address = System.getProperty("redisAddress", "127.0.0.1");
-        String port = System.getProperty("redisPort", "6379");
-        String password = System.getProperty("redisPassword", "");
 
         // Connect to redis
         this.client = RedisClient.create("redis://" + password + "@" + address + ":" + port + "/0");

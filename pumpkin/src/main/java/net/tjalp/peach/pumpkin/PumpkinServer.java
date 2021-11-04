@@ -38,13 +38,8 @@ public class PumpkinServer {
         this.logger = LoggerFactory.getLogger(PumpkinServer.class);
         this.config = new JsonConfig<>(configFile, PumpkinConfig.class);
 
-        // Redis
-        System.setProperty("redisAddress", config().redis.server);
-        System.setProperty("redisPort", String.valueOf(config().redis.port));
-        System.setProperty("redisPassword", config().redis.password);
-
         // Initialize various services
-        this.redis = new RedisManager(logger);
+        this.redis = new RedisManager(logger, config().redis);
 
         // Set the initialized state to true
         this.initialized = true;

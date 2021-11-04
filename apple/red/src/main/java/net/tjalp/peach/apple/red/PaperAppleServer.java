@@ -35,9 +35,6 @@ public class PaperAppleServer extends JavaPlugin implements AppleServer {
     public void start() {
         instance = this;
 
-        // Set redis properties
-        System.setProperty("redisAddress", "75.119.137.160");
-
         // Initialize various services
         this.redis = new RedisManager(getSLF4JLogger());
     }

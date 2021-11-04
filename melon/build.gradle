@@ -1,5 +1,6 @@
 dependencies {
     api project(':peel')
+
     compileOnly "com.velocitypowered:velocity-api:${project.lib_velocity_version}"
 
     annotationProcessor "com.velocitypowered:velocity-api:${project.lib_velocity_version}"

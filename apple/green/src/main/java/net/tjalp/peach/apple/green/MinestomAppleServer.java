@@ -9,12 +9,16 @@ import net.tjalp.peach.apple.green.command.GamemodeCommand;
 import net.tjalp.peach.apple.green.command.SkinCommand;
 import net.tjalp.peach.apple.green.command.StopCommand;
 import net.tjalp.peach.apple.green.command.TeleportCommand;
+import net.tjalp.peach.apple.green.config.MinestomAppleConfig;
 import net.tjalp.peach.apple.green.generator.SimpleGenerator;
 import net.tjalp.peach.apple.green.listener.AppleEventListener;
 import net.tjalp.peach.apple.green.registry.TjalpBiome;
 import net.tjalp.peach.apple.green.registry.TjalpDimension;
 import net.tjalp.peach.apple.pit.AppleServer;
+import net.tjalp.peach.peel.config.JsonConfig;
 import net.tjalp.peach.peel.database.RedisManager;
+
+import java.io.File;
 
 public class MinestomAppleServer implements AppleServer {
 
@@ -37,6 +41,9 @@ public class MinestomAppleServer implements AppleServer {
         return MinestomAppleServer.instance;
     }
 
+    /** The MinestomApple config */
+    private JsonConfig<MinestomAppleConfig> config;
+
     /** The redis manager service */
     private RedisManager redis;
 
@@ -46,13 +53,14 @@ public class MinestomAppleServer implements AppleServer {
     @Override
     public void start() {
         instance = this;
+        config = new JsonConfig<>(new File("config.json"), MinestomAppleConfig.class);
 
         // Initialize the Minecraft server
         MinecraftServer server = MinecraftServer.init();
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
         // Initialize various services
-        //redis = new RedisManager(MinecraftServer.LOGGER);
+        redis = new RedisManager(MinecraftServer.LOGGER, config().redis);
 
         // Enable Mojang authentication
         //MojangAuth.init();
@@ -92,7 +100,7 @@ public class MinestomAppleServer implements AppleServer {
     public void shutdown() {
         MinecraftServer.LOGGER.info("Shutting down services...");
 
-        //redis().dispose();
+        redis().dispose();
     }
 
     /**
@@ -105,6 +113,10 @@ public class MinestomAppleServer implements AppleServer {
         man.register(new SkinCommand());
         man.register(new StopCommand());
         man.register(new TeleportCommand());
+    }
+
+    public MinestomAppleConfig config() {
+        return this.config.data();
     }
 
     public RedisManager redis() {
