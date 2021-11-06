@@ -2,6 +2,7 @@ package net.tjalp.peach.apple.green;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
+import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
@@ -60,10 +61,15 @@ public class MinestomAppleServer implements AppleServer {
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
         // Initialize various services
-        redis = new RedisManager(MinecraftServer.LOGGER, config().redis);
+        redis = new RedisManager(MinecraftServer.LOGGER, "apple", config().redis); // TODO fix nodeIds
 
-        // Enable Mojang authentication
+        // Enable Mojang authentication (disabled because we're using a proxy, see below for Velocity)
         //MojangAuth.init();
+
+        // Enable Velocity proxy
+        String velocitySecret = redis.query().get("velocitySecret").block();
+
+        if (velocitySecret != null) VelocityProxy.enable(velocitySecret); else BungeeCordProxy.enable();
 
         // Register the main listener
         new AppleEventListener();
@@ -76,9 +82,6 @@ public class MinestomAppleServer implements AppleServer {
         // Set some useful values
         //MinecraftServer.setChunkViewDistance(10);
         MinecraftServer.setBrandName("apple");
-
-        // Enable Velocity proxy
-        VelocityProxy.enable("OpkUJU3FGM3I"); // TODO should probably make this secured & private
 
         // Create the instance
         overworld = instanceManager.createInstanceContainer(TjalpDimension.OVERWORLD);

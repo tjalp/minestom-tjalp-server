@@ -3,6 +3,8 @@ package net.tjalp.peach.apple.green;
 import net.minestom.server.Bootstrap;
 import net.minestom.server.extras.selfmodification.MinestomRootClassLoader;
 
+import java.util.Set;
+
 public class LaunchServer {
 
     public static void main(String[] args) {
@@ -14,7 +16,9 @@ public class LaunchServer {
 //        argsWithMixins[argsWithMixins.length-1] = "mixins.tjalp.json";
 
         // Prevent lettuce from using Minestom's class loader
-        MinestomRootClassLoader.getInstance().protectedPackages.add("io.lettuce");
+        Set<String> packages = MinestomRootClassLoader.getInstance().protectedPackages;
+        packages.add("io.lettuce");
+        packages.add("reactor.core");
 
         Bootstrap.bootstrap(MinestomAppleServer.class.getName(), args);
     }

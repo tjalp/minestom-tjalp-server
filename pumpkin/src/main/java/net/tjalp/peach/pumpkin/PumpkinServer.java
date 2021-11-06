@@ -38,9 +38,6 @@ public class PumpkinServer {
         this.logger = LoggerFactory.getLogger(PumpkinServer.class);
         this.config = new JsonConfig<>(configFile, PumpkinConfig.class);
 
-        // Initialize various services
-        this.redis = new RedisManager(logger, config().redis);
-
         // Set the initialized state to true
         this.initialized = true;
 
@@ -52,6 +49,14 @@ public class PumpkinServer {
      */
     public void start(String address, int port) {
         Check.stateCondition(!initialized, "PumpkinServer#init must be used before using PumpkinServer#start");
+
+        // Initialize various services
+        this.redis = new RedisManager(logger, "pumpkin", config().redis);
+
+        // TODO Set random Velocity secret
+        redis.transaction(query -> {
+            query.set("velocitySecret", "OpkUJU3FGM3I").subscribe();
+        }).subscribe();
 
         isRunning = true;
 
