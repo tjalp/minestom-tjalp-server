@@ -60,7 +60,7 @@ public class MelonServer {
         logger.info("Registered listeners");
 
         // Register active servers
-        registerServer("apple", "127.0.0.1", 25000);
+        registerServer("apple", "host.docker.internal", 25000);
 
         logger.info("Registered active servers");
     }

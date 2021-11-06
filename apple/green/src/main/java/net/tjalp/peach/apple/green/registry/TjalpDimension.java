@@ -7,14 +7,14 @@ import net.minestom.server.world.DimensionTypeManager;
 
 public class TjalpDimension {
 
-    public static final DimensionType OVERWORLD = DimensionType.builder(NamespaceID.from("minecraft:overworld"))
+    public static final DimensionType OVERWORLD = DimensionType.builder(NamespaceID.from("tjalp:overworld"))
             .ultrawarm(false)
             .natural(true)
             .piglinSafe(false)
             .respawnAnchorSafe(false)
             .bedSafe(true)
             .raidCapable(true)
-            .skylightEnabled(false)
+            .skylightEnabled(false) // Ambient light otherwise there's lagspikes when a new chunk loads
             .ceilingEnabled(false)
             .fixedTime(null)
             .ambientLight(1.0f)
