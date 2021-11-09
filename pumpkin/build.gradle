@@ -4,7 +4,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'net.tjalp.peach.pumpkin.Pumpkin',
+        attributes 'Main-Class': 'net.tjalp.peach.pumpkin.PumpkinKt',
                 'Multi-Release': true
     }
 }

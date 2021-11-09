@@ -7,4 +7,14 @@ public class MinestomAppleConfig implements Configurable {
 
     /** Redis connection instructions **/
     public RedisDetails redis = new RedisDetails();
+
+    @Override
+    public void onLoad() {
+
+    }
+
+    @Override
+    public void onSave() {
+
+    }
 }

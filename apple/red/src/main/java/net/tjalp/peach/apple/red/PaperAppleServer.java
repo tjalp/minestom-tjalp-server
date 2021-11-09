@@ -36,7 +36,7 @@ public class PaperAppleServer extends JavaPlugin implements AppleServer {
         instance = this;
 
         // Initialize various services
-        this.redis = new RedisManager(getSLF4JLogger(), "apple");
+        this.redis = new RedisManager(getSLF4JLogger(), "apple", "localhost", 6379, "");
     }
 
     @Override

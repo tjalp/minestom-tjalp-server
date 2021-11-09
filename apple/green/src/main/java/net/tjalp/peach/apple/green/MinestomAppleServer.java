@@ -17,6 +17,7 @@ import net.tjalp.peach.apple.green.registry.TjalpBiome;
 import net.tjalp.peach.apple.green.registry.TjalpDimension;
 import net.tjalp.peach.apple.pit.AppleServer;
 import net.tjalp.peach.peel.config.JsonConfig;
+import net.tjalp.peach.peel.config.RedisDetails;
 import net.tjalp.peach.peel.database.RedisManager;
 
 import java.io.File;
@@ -54,14 +55,15 @@ public class MinestomAppleServer implements AppleServer {
     @Override
     public void start() {
         instance = this;
-        config = new JsonConfig<>(new File("config.json"), MinestomAppleConfig.class);
+        config = new JsonConfig<>(new File("config.json"), MinestomAppleConfig.class, true);
 
         // Initialize the Minecraft server
         MinecraftServer server = MinecraftServer.init();
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
         // Initialize various services
-        redis = new RedisManager(MinecraftServer.LOGGER, "apple", config().redis); // TODO fix nodeIds
+        RedisDetails redisDetails = config().redis;
+        redis = new RedisManager(MinecraftServer.LOGGER, "apple", redisDetails.getServer(), redisDetails.getPort(), redisDetails.getPassword()); // TODO fix nodeIds
 
         // Enable Mojang authentication (disabled because we're using a proxy, see below for Velocity)
         //MojangAuth.init();
@@ -119,7 +121,7 @@ public class MinestomAppleServer implements AppleServer {
     }
 
     public MinestomAppleConfig config() {
-        return this.config.data();
+        return config.getData();
     }
 
     public RedisManager redis() {

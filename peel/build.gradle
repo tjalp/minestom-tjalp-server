@@ -3,3 +3,5 @@ dependencies {
     api "org.apache.logging.log4j:log4j-slf4j-impl:${project.lib_slf4j_version}"
     api "io.lettuce:lettuce-core:${project.lib_lettuce_version}"
 }
+
+shadowJar.enabled = false
