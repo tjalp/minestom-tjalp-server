@@ -15,7 +15,7 @@ private val DEFAULT_EFFECTS = BiomeEffects.builder()
     .build()
 
 // Biomes start here
-val PLAINS = Biome.builder()
+val PLAINS: Biome = Biome.builder()
     .category(Biome.Category.NONE)
     .name(NamespaceID.from("tjalp:plains"))
     .temperature(0.8f)
