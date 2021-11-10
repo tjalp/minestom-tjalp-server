@@ -10,11 +10,15 @@ interface Configurable {
     * Called when the configuration
     * is loaded from the disk
     */
-    fun onLoad() {}
+    fun onLoad() {
+        return
+    }
 
     /**
      * Called when the configuration
      * is saved to the disk
      */
-    fun onSave() {}
+    fun onSave() {
+        return
+    }
 }

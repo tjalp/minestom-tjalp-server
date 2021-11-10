@@ -1,4 +1,4 @@
-package net.tjalp.peach.apple.green.command;
+package net.tjalp.peach.apple.green.old.command;
 
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;

@@ -1,10 +1,14 @@
 package net.tjalp.peach.apple.red;
 
 import net.tjalp.peach.apple.pit.AppleServer;
+import net.tjalp.peach.apple.pit.config.AppleConfig;
+import net.tjalp.peach.peel.config.JsonConfig;
 import net.tjalp.peach.peel.database.RedisManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
-public class PaperAppleServer extends JavaPlugin implements AppleServer {
+public class PaperAppleServer extends JavaPlugin {
 
     /** The static plugin instance, there should only be one */
     private static PaperAppleServer instance;
@@ -31,7 +35,6 @@ public class PaperAppleServer extends JavaPlugin implements AppleServer {
         this.shutdown();
     }
 
-    @Override
     public void start() {
         instance = this;
 
@@ -39,12 +42,47 @@ public class PaperAppleServer extends JavaPlugin implements AppleServer {
         this.redis = new RedisManager(getSLF4JLogger(), "apple", "localhost", 6379, "");
     }
 
-    @Override
     public void shutdown() {
-        redis().dispose();
+        redis.dispose();
     }
 
-    public RedisManager redis() {
+    public @NotNull RedisManager getRedis() {
         return this.redis;
+    }
+
+    @NotNull
+    public JsonConfig<AppleConfig> getAppleConfig() {
+        return null;
+    }
+
+    class Test extends AppleServer {
+
+        @NotNull
+        @Override
+        public Logger getLogger() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public RedisManager getRedis() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public JsonConfig<AppleConfig> getAppleConfig() {
+            return null;
+        }
+
+        @Override
+        public void start() {
+
+        }
+
+        @Override
+        public void shutdown() {
+
+        }
     }
 }
