@@ -55,4 +55,9 @@ subprojects {
         archiveClassifier.set('')
         archiveVersion.set('')
     }
+
+    compileJava {
+        targetCompatibility = 17
+        sourceCompatibility = 17
+    }
 }
