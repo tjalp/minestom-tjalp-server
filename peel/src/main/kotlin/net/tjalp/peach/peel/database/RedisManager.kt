@@ -49,6 +49,8 @@ class RedisManager(
     init {
         logger.info("Initializing Redis Manager")
 
+        val startTime = System.currentTimeMillis()
+
         // Disable unformatted lettuce logging
         // breakig the console formatting.
         java.util.logging.Logger.getLogger("io.lettuce.core").level = Level.OFF
@@ -58,7 +60,7 @@ class RedisManager(
         this.subscribe = client.connectPubSub()
         this.publish = client.connectPubSub()
 
-        logger.info("Redis is ready for connections")
+        logger.info("Initialized Redis Manager (took ${System.currentTimeMillis() - startTime}ms)")
     }
 
     /**
