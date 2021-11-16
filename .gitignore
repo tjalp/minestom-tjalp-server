@@ -3,6 +3,9 @@
 .idea
 extensions
 
+# Ignore Proto generated files
+**/net/tjalp/peach/proto/
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

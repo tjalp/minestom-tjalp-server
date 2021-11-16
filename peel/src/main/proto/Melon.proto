@@ -1,0 +1,15 @@
+syntax = 'proto3';
+
+package net.tjalp.peach.proto.melon;
+
+import "google/protobuf/empty.proto";
+
+message PlayerHandshakeRequest {
+    string uuid = 1;
+    string player_name = 2;
+}
+
+service MelonService {
+
+    rpc PlayerHandshake (PlayerHandshakeRequest) returns (google.protobuf.Empty);
+}

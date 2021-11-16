@@ -5,6 +5,13 @@ import net.tjalp.peach.peel.config.RedisDetails
 
 class PumpkinConfig : Configurable {
 
-    /** Redis connection instructions  */
+    /**
+     * The port Pumpkin should listen on
+     */
+    var port: Int = 34040
+
+    /**
+     * Redis connection instructions
+     */
     var redis = RedisDetails()
 }

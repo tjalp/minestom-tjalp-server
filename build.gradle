@@ -10,24 +10,21 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.lib_kotlin_version}"
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.0"
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:${project.lib_shadow_version}"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:${project.lib_protobuf_version}"
     }
 }
 
 subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'java'
+    apply plugin: 'com.google.protobuf'
     apply plugin: 'kotlin'
     apply plugin: 'kotlin-kapt'
 
     repositories {
         mavenCentral()
         mavenLocal()
-
-        // Sponge
-        maven {
-            url 'https://repo.spongepowered.org/maven'
-        }
 
         // Jitpack
         maven {
@@ -59,5 +56,44 @@ subprojects {
     compileJava {
         targetCompatibility = 17
         sourceCompatibility = 17
+    }
+
+    protobuf {
+        generatedFilesBaseDir = "$projectDir/src"
+
+        protoc {
+            artifact = "com.google.protobuf:protoc:${project.lib_protobuf_protoc_version}"
+        }
+
+        plugins {
+            grpc {
+                artifact = "io.grpc:protoc-gen-grpc-java:${project.lib_grpc_version}"
+            }
+            grpckt {
+                artifact = "io.grpc:protoc-gen-grpc-kotlin:${project.lib_grpckt_version}:jdk7@jar"
+            }
+        }
+
+        generateProtoTasks {
+            ofSourceSet('main').each { task ->
+//                if(task.name == 'generateProto') {
+//                    if(hasProto) {
+                        task.dependsOn += 'clean'
+//                    } else {
+//                        task.enabled = false
+//                    }
+//                }
+
+                task.plugins {
+                    grpckt {
+                        outputSubDir = 'java'
+                    }
+                    grpc {
+                        outputSubDir = 'java'
+                    }
+                }
+            }
+
+        }
     }
 }

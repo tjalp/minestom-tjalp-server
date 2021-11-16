@@ -1,7 +1,7 @@
 {
-  "required":  true,
+  "required": true,
   "minVersion": "0.8",
-  "package": "net.tjalp.peach.apple.mixin",
+  "package": "net.tjalp.peach.apple.green.mixin",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
