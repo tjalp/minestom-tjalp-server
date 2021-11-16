@@ -4,6 +4,7 @@ import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.exception.FailedOperationException
 import net.tjalp.peach.pumpkin.config.PumpkinConfig
+import net.tjalp.peach.pumpkin.node.NodeService
 import net.tjalp.peach.pumpkin.node.RpcService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,6 +24,7 @@ class PumpkinServer {
     private var initialized: Boolean = false
     private var isRunning: Boolean = false
 
+    lateinit var nodeService: NodeService; private set
     lateinit var rpcService: RpcService; private set
 
     /** The pumpkin config */
@@ -51,9 +53,13 @@ class PumpkinServer {
         }
 
         // Initialize various services
+        nodeService = NodeService(this)
         val redisDetails = config.redis
         redis = RedisManager(logger, "pumpkin", redisDetails.server, redisDetails.port, redisDetails.password)
         rpcService = RpcService(this)
+
+        // Initialize services
+        nodeService.setup()
 
         // TODO Set random Velocity secret
         redis.transactionLegacy {

@@ -6,8 +6,16 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerInfo
+import io.grpc.ManagedChannel
+import net.tjalp.peach.melon.config.MelonConfig
 import net.tjalp.peach.melon.listener.MelonEventListener
+import net.tjalp.peach.peel.config.JsonConfig
+import net.tjalp.peach.peel.database.RedisManager
+import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.proto.melon.MelonServiceGrpc
+import net.tjalp.peach.proto.melon.MelonServiceGrpc.MelonServiceFutureStub
 import org.slf4j.Logger
+import java.io.File
 import java.net.InetSocketAddress
 
 @Plugin(
@@ -32,8 +40,46 @@ class MelonServer {
     @Inject
     lateinit var logger: Logger
 
+    lateinit var melonConfig: JsonConfig<MelonConfig>; private set
+
+    /**
+     * The client RPC channel
+     */
+    lateinit var rpcChannel: ManagedChannel; private set
+
+    lateinit var rpcFutureStub: MelonServiceFutureStub; private set
+
+    /**
+     * The redis manager
+     */
+    lateinit var redis: RedisManager; private set
+
+    /**
+     * The melon config
+     */
+    val config: MelonConfig
+        get() = melonConfig.data
+
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
+        melonConfig = JsonConfig(File("config.json"), MelonConfig::class.java)
+
+        rpcChannel = PeachRPC.createChannel(
+            logger = logger,
+            config = config.pumpkin
+        ).build()
+
+        rpcFutureStub = MelonServiceGrpc.newFutureStub(rpcChannel)
+
+        // Initialize various services
+        val redisDetails = config.redis
+        redis = RedisManager(
+            logger,
+            "melon", // TODO fix nodeIds
+            redisDetails.server,
+            redisDetails.port,
+            redisDetails.password
+        )
 
         // Register listeners
         proxy.eventManager.register(this, MelonEventListener(this))

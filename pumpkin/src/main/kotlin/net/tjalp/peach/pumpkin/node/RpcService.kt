@@ -61,6 +61,20 @@ class RpcService(
         }
     }
 
+    /**
+     * Perform custom configuration to the
+     * RPC service before it has started.
+     *
+     * @param callback The configurator
+     */
+    fun configure(callback: (NettyServerBuilder) -> Unit) {
+        if(server != null) {
+            throw IllegalStateException("RPC Server already started!")
+        }
+
+        callback(builder)
+    }
+
     private fun registerDefaults() {
         builder.apply {
 
