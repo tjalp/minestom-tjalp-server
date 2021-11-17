@@ -5,6 +5,7 @@ import com.velocitypowered.api.event.connection.ConnectionHandshakeEvent
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import kotlinx.coroutines.runBlocking
 import net.tjalp.peach.melon.MelonServer
 import net.tjalp.peach.proto.melon.Melon
 import java.util.*
@@ -33,6 +34,8 @@ class MelonEventListener(
             .setPlayerName(event.player.username)
             .build()
 
-        melon.rpcFutureStub.playerHandshake(request)
+        runBlocking {
+            melon.rpcStub.playerHandshake(request)
+        }
     }
 }

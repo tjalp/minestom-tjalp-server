@@ -1,5 +1,6 @@
 package net.tjalp.peach.apple.green.listener
 
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -24,6 +25,7 @@ import net.minestom.server.network.packet.server.play.EffectPacket
 import net.minestom.server.utils.PacketUtils
 import net.minestom.server.utils.time.TimeUnit
 import net.tjalp.peach.apple.green.MinestomAppleServer
+import net.tjalp.peach.proto.apple.Apple
 
 /**
  * The main event listener
@@ -66,6 +68,15 @@ class AppleEventListener(
         event.setSpawningInstance(server.overworld)
         player.respawnPoint = Pos(0.5, 64.0, 0.5)
         player.permissionLevel = 4
+
+        val request = Apple.PlayerHandshakeRequest.newBuilder()
+            .setUuid(player.uuid.toString())
+            .setPlayerName(player.username)
+            .build()
+
+        runBlocking {
+            server.rpcStub.playerHandshake(request)
+        }
     }
 
     private fun onPlayerBlockBreak(event: PlayerBlockBreakEvent) {

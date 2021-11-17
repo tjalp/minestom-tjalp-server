@@ -11,6 +11,6 @@ class MelonService(
 ) : MelonServiceImplBase() {
 
     override fun playerHandshake(request: Melon.PlayerHandshakeRequest, responseObserver: StreamObserver<Empty>) {
-        pumpkin.logger.info("Received player handshake with (player name: ${request.playerName}, unique identifier: ${request.uuid})")
+        pumpkin.logger.info("Received player handshake with (node type: melon, player name: ${request.playerName}, unique identifier: ${request.uuid})")
     }
 }

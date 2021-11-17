@@ -12,8 +12,7 @@ import net.tjalp.peach.melon.listener.MelonEventListener
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.PeachRPC
-import net.tjalp.peach.proto.melon.MelonServiceGrpc
-import net.tjalp.peach.proto.melon.MelonServiceGrpc.MelonServiceFutureStub
+import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
 import org.slf4j.Logger
 import java.io.File
 import java.net.InetSocketAddress
@@ -46,8 +45,7 @@ class MelonServer {
      * The client RPC channel
      */
     lateinit var rpcChannel: ManagedChannel; private set
-
-    lateinit var rpcFutureStub: MelonServiceFutureStub; private set
+    lateinit var rpcStub: MelonServiceCoroutineStub; private set
 
     /**
      * The redis manager
@@ -69,7 +67,7 @@ class MelonServer {
             config = config.pumpkin
         ).build()
 
-        rpcFutureStub = MelonServiceGrpc.newFutureStub(rpcChannel)
+        rpcStub = MelonServiceCoroutineStub(rpcChannel)
 
         // Initialize various services
         val redisDetails = config.redis

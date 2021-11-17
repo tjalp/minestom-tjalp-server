@@ -7,6 +7,8 @@ dependencies {
     api "io.grpc:grpc-kotlin-stub:${project.lib_grpckt_version}"
     api "io.grpc:grpc-protobuf:${project.lib_grpc_version}"
     api "com.google.protobuf:protobuf-kotlin:${project.lib_protobuf_kotlin_version}"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.lib_kotlinx_version}"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${project.lib_kotlinx_version}"
 }
 
 shadowJar.enabled = false
