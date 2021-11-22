@@ -77,7 +77,7 @@ class RpcService(
 
     private fun registerDefaults() {
         builder.apply {
-
+            intercept(PumpkinSyncInterceptor(pumpkin))
         }
     }
 }

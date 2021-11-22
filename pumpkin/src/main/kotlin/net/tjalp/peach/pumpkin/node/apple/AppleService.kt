@@ -10,7 +10,7 @@ class AppleService(
     private val pumpkin: PumpkinServer
 ) : AppleServiceImplBase() {
 
-    override fun playerHandshake(request: Apple.PlayerHandshakeRequest, responseObserver: StreamObserver<Empty>) {
+    override fun playerHandshake(request: Apple.PlayerHandshakeRequest, response: StreamObserver<Empty>) {
         pumpkin.logger.info("Received player handshake with (node type: apple, player name: ${request.playerName}, unique identifier: ${request.uuid})")
     }
 }

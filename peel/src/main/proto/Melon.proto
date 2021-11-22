@@ -5,11 +5,17 @@ package net.tjalp.peach.proto.melon;
 import "google/protobuf/empty.proto";
 
 message PlayerHandshakeRequest {
-    string uuid = 1;
-    string player_name = 2;
+    string unique_id = 1;
+    string username = 2;
+}
+
+message PlayerQuit {
+    string unique_id = 1;
 }
 
 service MelonService {
 
     rpc PlayerHandshake (PlayerHandshakeRequest) returns (google.protobuf.Empty);
+
+    rpc PlayerDisconnect (PlayerQuit) returns (google.protobuf.Empty);
 }

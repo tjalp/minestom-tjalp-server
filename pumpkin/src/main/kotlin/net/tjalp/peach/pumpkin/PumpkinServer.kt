@@ -6,6 +6,7 @@ import net.tjalp.peach.peel.exception.FailedOperationException
 import net.tjalp.peach.pumpkin.config.PumpkinConfig
 import net.tjalp.peach.pumpkin.node.NodeService
 import net.tjalp.peach.pumpkin.node.RpcService
+import net.tjalp.peach.pumpkin.player.PlayerService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -26,6 +27,12 @@ class PumpkinServer {
 
     lateinit var nodeService: NodeService; private set
     lateinit var rpcService: RpcService; private set
+    lateinit var playerService: PlayerService; private set
+
+    /**
+     * The main thread
+     */
+    val mainThread = PumpkinMainThread.create()
 
     /** The pumpkin config */
     val config: PumpkinConfig
@@ -57,9 +64,11 @@ class PumpkinServer {
         val redisDetails = config.redis
         redis = RedisManager(logger, "pumpkin", redisDetails.server, redisDetails.port, redisDetails.password)
         rpcService = RpcService(this)
+        playerService = PlayerService(this)
 
         // Initialize services
         nodeService.setup()
+        playerService.setup()
 
         // TODO Set random Velocity secret
         redis.transactionLegacy {
@@ -90,10 +99,19 @@ class PumpkinServer {
     fun shutdown() {
         logger.info("Shutting down services")
 
-        redis.dispose()
-        rpcService.stop()
+        try {
+            mainThread.syncTask {
+                redis.dispose()
+                rpcService.stop()
 
-        isRunning = false
+                isRunning = false
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        finally {
+            mainThread.shutdown()
+        }
     }
 
     companion object {

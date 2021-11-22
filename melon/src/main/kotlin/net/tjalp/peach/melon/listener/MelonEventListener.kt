@@ -1,10 +1,12 @@
 package net.tjalp.peach.melon.listener
 
 import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.connection.ConnectionHandshakeEvent
+import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import net.tjalp.peach.melon.MelonServer
 import net.tjalp.peach.proto.melon.Melon
@@ -28,14 +30,24 @@ class MelonEventListener(
 
     @Subscribe
     private fun onLogin(event: LoginEvent) {
-
         val request = Melon.PlayerHandshakeRequest.newBuilder()
-            .setUuid(event.player.uniqueId.toString())
-            .setPlayerName(event.player.username)
+            .setUniqueId(event.player.uniqueId.toString())
+            .setUsername(event.player.username)
             .build()
 
         runBlocking {
             melon.rpcStub.playerHandshake(request)
+        }
+    }
+
+    @Subscribe
+    private fun onDisconnect(event: DisconnectEvent) {
+        val request = Melon.PlayerQuit.newBuilder()
+            .setUniqueId(event.player.uniqueId.toString())
+            .build()
+
+        GlobalScope.async {
+            melon.rpcStub.playerDisconnect(request)
         }
     }
 }

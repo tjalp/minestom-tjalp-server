@@ -5,7 +5,7 @@
             <Layout type="PatternLayout" pattern="[%t] [%d{HH:mm:ss}] - %p - %m%n"/>
         </Appender>
         <Appender type="Console" name="STDOUT-WithCaller">
-            <Layout type="PatternLayout" pattern="[%t] [%d{HH:mm:ss}] (%C{1}.%M) - %p - %m%n"/>
+            <Layout type="PatternLayout" pattern="[%t] [%d{HH:mm:ss}] - %p - %m%n"/>
         </Appender>
     </Appenders>
 
