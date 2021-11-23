@@ -1,5 +1,6 @@
 package net.tjalp.peach.pumpkin.node.melon
 
+import net.tjalp.peach.proto.melon.Melon
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.HealthMonitor
 import net.tjalp.peach.pumpkin.player.ConnectedPlayer
@@ -10,7 +11,7 @@ class MelonServerNode(
     override val nodeId: String
 ) : MelonNode {
 
-    override val healthMonitor: HealthMonitor = HealthMonitor(this)
+    override val healthMonitor: HealthMonitor<Melon.MelonHealthReport> = HealthMonitor(this)
     override val players: List<PeachPlayer>
         get() = connectedPlayers
     override val playerCount: Int

@@ -13,7 +13,7 @@ import reactor.core.publisher.DirectProcessor
  * The HealthMonitor tracks the health of a
  * remote node
  */
-class HealthMonitor(val node: Node) {
+class HealthMonitor<T>(val node: Node) {
 
     private val logger: Logger = PumpkinServer.get().logger
 
@@ -32,7 +32,13 @@ class HealthMonitor(val node: Node) {
     /**
      * Listen for connection open signals
      */
-    var onConnectionOpen: DirectProcessor<Unit> = DirectProcessor.create()
+    var onConnectionOpen: DirectProcessor<T> = DirectProcessor.create()
+        private set
+
+    /**
+     * Listen for incoming health reports
+     */
+    var onReport: DirectProcessor<T> = DirectProcessor.create()
         private set
 
     /**
@@ -48,7 +54,7 @@ class HealthMonitor(val node: Node) {
     /**
      * Listen for health reports
      */
-    fun listen(response: StreamObserver<Empty>) : StreamObserver<Unit> {
+    fun listen(response: StreamObserver<Empty>) : StreamObserver<T> {
         handle = response as ServerCallStreamObserver
 
         // When a cancellation event is received and
@@ -63,7 +69,10 @@ class HealthMonitor(val node: Node) {
         return streamObserver(
             onNext = {
                 // Mark the connection as open
-                openConnection()
+                openConnection(it)
+
+                // Pass the report to subscribers
+                onReport.onNext(it)
 
                 // Notify the client, allowing them to
                 // mark the connection as successful
@@ -77,14 +86,16 @@ class HealthMonitor(val node: Node) {
 
     /**
      * Mark the connection as opened
+     *
+     * @param report The initial report
      */
-    private fun openConnection() {
+    private fun openConnection(report: T) {
         if(isOnline) return
         isOnline = true
 
         logger.info("Connection to ${node.nodeId} opened")
 
-        onConnectionOpen.onNext(Unit)
+        onConnectionOpen.onNext(report)
     }
 
     /**
@@ -101,11 +112,11 @@ class HealthMonitor(val node: Node) {
         onConnectionDrop.onNext(Unit)
     }
 
-	/**
-	 * Terminate the monitor connection
-	 */
-	fun close() {
-		handle?.onError(Status.CANCELLED.asException())
-	}
+    /**
+     * Terminate the monitor connection
+     */
+    fun close() {
+        handle?.onError(Status.CANCELLED.asException())
+    }
 
 }

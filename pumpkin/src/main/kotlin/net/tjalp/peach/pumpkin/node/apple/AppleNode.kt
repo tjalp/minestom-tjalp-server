@@ -8,7 +8,7 @@ interface AppleNode : PlayerNode {
     /**
      * The health monitor instance
      */
-    val healthMonitor: HealthMonitor
+    val healthMonitor: HealthMonitor<Void>
 
     /**
      * The apple node's server

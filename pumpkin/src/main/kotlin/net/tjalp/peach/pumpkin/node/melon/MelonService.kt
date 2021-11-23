@@ -19,6 +19,10 @@ class MelonService(
         pumpkin.nodeService.register(it)
     }
 
+    override fun healthStatus(response: StreamObserver<Empty>): StreamObserver<Melon.MelonHealthReport> {
+        return pumpkin.nodeService.melonNodes.first().healthMonitor.listen(response)
+    }
+
     override fun proxyHandshake(
         request: Melon.ProxyHandshakeRequest,
         response: StreamObserver<Melon.ProxyHandshakeResponse>

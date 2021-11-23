@@ -12,7 +12,7 @@ class AppleServerNode(
     override val port: Int
 ) : AppleNode {
 
-    override val healthMonitor: HealthMonitor = HealthMonitor(this)
+    override val healthMonitor: HealthMonitor<Void> = HealthMonitor(this)
     override val players: List<PeachPlayer>
         get() = connectedPlayers
     override val playerCount: Int

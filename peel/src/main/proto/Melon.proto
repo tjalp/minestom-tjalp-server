@@ -4,6 +4,10 @@ package net.tjalp.peach.proto.melon;
 
 import "google/protobuf/empty.proto";
 
+message MelonHealthReport {
+
+}
+
 message ProxyHandshakeRequest {
     repeated LocalPlayer player = 1;
 }
@@ -34,6 +38,8 @@ message AppleNodeRegistration {
 }
 
 service MelonService {
+
+    rpc HealthStatus (stream MelonHealthReport) returns (google.protobuf.Empty);
 
     rpc ProxyHandshake (ProxyHandshakeRequest) returns (ProxyHandshakeResponse);
 

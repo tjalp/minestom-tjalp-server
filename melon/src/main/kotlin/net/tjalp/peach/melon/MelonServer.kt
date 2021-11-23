@@ -13,8 +13,10 @@ import net.tjalp.peach.melon.config.MelonConfig
 import net.tjalp.peach.melon.listener.MelonEventListener
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
+import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
-import net.tjalp.peach.proto.melon.Melon
+import net.tjalp.peach.proto.melon.Melon.MelonHealthReport
+import net.tjalp.peach.proto.melon.Melon.ProxyHandshakeRequest
 import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
 import org.slf4j.Logger
 import java.io.File
@@ -51,6 +53,11 @@ class MelonServer {
     lateinit var rpcStub: MelonServiceCoroutineStub; private set
 
     /**
+     * The heartbeat
+     */
+    lateinit var healthReporter: HealthReporter<MelonHealthReport>; private set
+
+    /**
      * The redis manager
      */
     lateinit var redis: RedisManager; private set
@@ -74,6 +81,8 @@ class MelonServer {
 
         // Initialize various services
         val redisDetails = config.redis
+
+        healthReporter = MelonHealthReporter(this)
         redis = RedisManager(
             logger,
             "melon", // TODO fix nodeIds
@@ -104,7 +113,7 @@ class MelonServer {
     }
 
     private fun sendProxyHandshake() {
-        val request = Melon.ProxyHandshakeRequest.newBuilder()
+        val request = ProxyHandshakeRequest.newBuilder()
 
         GlobalScope.async {
             logger.info("Sending proxy handshake")
