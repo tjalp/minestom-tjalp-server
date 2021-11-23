@@ -1,5 +1,7 @@
 package net.tjalp.peach.apple.green.listener
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -74,7 +76,7 @@ class AppleEventListener(
             .setPlayerName(player.username)
             .build()
 
-        runBlocking {
+        GlobalScope.async {
             server.rpcStub.playerHandshake(request)
         }
     }

@@ -59,6 +59,8 @@ class PumpkinServer {
             throw FailedOperationException("PumpkinServer#init must be called before PumpkinServer#start")
         }
 
+        instance = this
+
         // Initialize various services
         nodeService = NodeService(this)
         val redisDetails = config.redis

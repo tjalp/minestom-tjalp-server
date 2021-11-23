@@ -4,6 +4,14 @@ package net.tjalp.peach.proto.melon;
 
 import "google/protobuf/empty.proto";
 
+message ProxyHandshakeRequest {
+    repeated LocalPlayer player = 1;
+}
+
+message ProxyHandshakeResponse {
+    repeated AppleNodeRegistration apple_node_registration = 1;
+}
+
 message PlayerHandshakeRequest {
     string unique_id = 1;
     string username = 2;
@@ -13,7 +21,21 @@ message PlayerQuit {
     string unique_id = 1;
 }
 
+message LocalPlayer {
+    string unique_id = 1;
+    string username = 2;
+    string current_apple_node = 3;
+}
+
+message AppleNodeRegistration {
+    string node_id = 1;
+    string server = 2;
+    int32 port = 3;
+}
+
 service MelonService {
+
+    rpc ProxyHandshake (ProxyHandshakeRequest) returns (ProxyHandshakeResponse);
 
     rpc PlayerHandshake (PlayerHandshakeRequest) returns (google.protobuf.Empty);
 

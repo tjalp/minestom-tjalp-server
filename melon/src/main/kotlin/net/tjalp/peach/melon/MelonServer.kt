@@ -7,11 +7,14 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerInfo
 import io.grpc.ManagedChannel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import net.tjalp.peach.melon.config.MelonConfig
 import net.tjalp.peach.melon.listener.MelonEventListener
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.proto.melon.Melon
 import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
 import org.slf4j.Logger
 import java.io.File
@@ -79,15 +82,13 @@ class MelonServer {
             redisDetails.password
         )
 
+        // Send the proxy handshake
+        sendProxyHandshake()
+
         // Register listeners
         proxy.eventManager.register(this, MelonEventListener(this))
 
         logger.info("Registered listeners")
-
-        // Register active servers
-        registerServer("apple", "host.docker.internal", 25000)
-
-        logger.info("Registered active servers")
     }
 
     /**
@@ -100,5 +101,20 @@ class MelonServer {
     private fun registerServer(id: String, address: String, port: Int) {
         val inet = InetSocketAddress(address, port)
         proxy.registerServer(ServerInfo(id, inet))
+    }
+
+    private fun sendProxyHandshake() {
+        val request = Melon.ProxyHandshakeRequest.newBuilder()
+
+        GlobalScope.async {
+            logger.info("Sending proxy handshake")
+            val response = rpcStub.proxyHandshake(request.build())
+            logger.info("Registering servers")
+
+            response.appleNodeRegistrationList.forEach {
+                logger.info("Registering server (nodeId: ${it.nodeId})")
+                registerServer(it.nodeId, it.server, it.port)
+            }
+        }
     }
 }

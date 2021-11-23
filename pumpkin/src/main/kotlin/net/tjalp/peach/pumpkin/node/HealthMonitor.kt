@@ -77,8 +77,6 @@ class HealthMonitor(val node: Node) {
 
     /**
      * Mark the connection as opened
-     *
-     * @param report The initial report
      */
     private fun openConnection() {
         if(isOnline) return

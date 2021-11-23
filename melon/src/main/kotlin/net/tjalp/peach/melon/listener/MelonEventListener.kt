@@ -18,14 +18,9 @@ class MelonEventListener(
 
     @Subscribe
     private fun onPlayerChooseInitialServer(event: PlayerChooseInitialServerEvent) {
-        val server: Optional<RegisteredServer> = melon.proxy.getServer("apple")
+        val server = melon.proxy.allServers.firstOrNull()
 
-        if (server.isPresent) {
-            event.setInitialServer(server.get())
-            return
-        }
-
-        event.setInitialServer(null)
+        event.setInitialServer(server)
     }
 
     @Subscribe

@@ -15,7 +15,45 @@ class MelonService(
 ) : MelonServiceImplBase() {
 
     private val tempMelonNode: MelonNode = MelonServerNode(pumpkin, "melon-1")
-    private val tempAppleNode: AppleNode = AppleServerNode()
+    private val tempAppleNode: AppleNode = AppleServerNode(pumpkin, "apple-1", "localhost", 25000).also {
+        pumpkin.nodeService.register(it)
+    }
+
+    override fun proxyHandshake(
+        request: Melon.ProxyHandshakeRequest,
+        response: StreamObserver<Melon.ProxyHandshakeResponse>
+    ) {
+        val melonNode = MelonServerNode(pumpkin, UUID.randomUUID().toString())
+
+        // Register the melon node
+        pumpkin.nodeService.register(melonNode)
+
+        for (player in request.playerList) {
+            pumpkin.playerService.register(
+                uniqueId = UUID.fromString(player.uniqueId),
+                username = player.username,
+                melonNode = melonNode,
+                appleNode = tempAppleNode // TODO Apple nodes
+            )
+        }
+
+        val appleNodeRegistrations = pumpkin.nodeService.appleNodes
+            //.filter { it.isOnline }
+            .map {
+                Melon.AppleNodeRegistration.newBuilder()
+                    .setNodeId(it.nodeId)
+                    .setServer(it.server)
+                    .setPort(it.port)
+                    .build()
+            }
+
+        val res = Melon.ProxyHandshakeResponse.newBuilder()
+            .addAllAppleNodeRegistration(appleNodeRegistrations)
+            .build()
+
+        response.onNext(res)
+        response.onCompleted()
+    }
 
     override fun playerHandshake(request: Melon.PlayerHandshakeRequest, response: StreamObserver<Empty>) {
         pumpkin.playerService.register(
