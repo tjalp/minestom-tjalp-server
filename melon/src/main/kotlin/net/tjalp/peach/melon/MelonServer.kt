@@ -3,6 +3,7 @@ package net.tjalp.peach.melon
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerInfo
@@ -73,6 +74,7 @@ class MelonServer {
         melonConfig = JsonConfig(File("config.json"), MelonConfig::class.java)
 
         rpcChannel = PeachRPC.createChannel(
+            "melon", // TODO fix nodeIds
             logger = logger,
             config = config.pumpkin
         ).build()
@@ -91,13 +93,26 @@ class MelonServer {
             redisDetails.password
         )
 
-        // Send the proxy handshake
-        sendProxyHandshake()
+        // Send the proxy handshake when the connection is opened
+        healthReporter.onConnectionOpen.subscribe {
+            sendProxyHandshake()
+        }
+
+        healthReporter.start()
+
+        // TODO Connect when a redis signal from pumpkin is received
+        healthReporter.connect()
 
         // Register listeners
         proxy.eventManager.register(this, MelonEventListener(this))
 
         logger.info("Registered listeners")
+    }
+
+    @Subscribe
+    fun onProxyShutdown(event: ProxyShutdownEvent) {
+        healthReporter.stop()
+        rpcChannel.shutdownNow()
     }
 
     /**

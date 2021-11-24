@@ -1,5 +1,6 @@
 package net.tjalp.peach.pumpkin.node
 
+import net.tjalp.peach.pumpkin.PumpkinMainThread
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.apple.AppleNode
 import net.tjalp.peach.pumpkin.node.apple.AppleService
@@ -35,6 +36,8 @@ class NodeService(
     private val registeredMelonNodes = mutableSetOf<MelonNode>()
     private val registeredAppleNodes = mutableSetOf<AppleNode>()
 
+    private val thread: PumpkinMainThread = pumpkin.mainThread
+
     /**
      * Initialize the registry
      */
@@ -53,6 +56,7 @@ class NodeService(
      * @param node The melon node
      */
     fun register(node: MelonNode) {
+        thread.ensureMainThread()
         pumpkin.logger.info("Registering melon node (nodeId: ${node.nodeId})")
 
         // Register the players that are already on this melon node
@@ -74,6 +78,7 @@ class NodeService(
      * @param node The apple node
      */
     fun register(node: AppleNode) {
+        thread.ensureMainThread()
         registeredAppleNodes.add(node)
     }
 
@@ -83,6 +88,7 @@ class NodeService(
      * @param node The melon node to unregister
      */
     fun unregister(node: MelonNode) {
+        thread.ensureMainThread()
         pumpkin.logger.info("Unregistering melon node (nodeId: ${node.nodeId})")
 
         // Unregister all the players that are on this melon node
@@ -99,6 +105,17 @@ class NodeService(
      * @param node The apple node the unregister
      */
     fun unregister(node: AppleNode) {
+        thread.ensureMainThread()
         registeredAppleNodes.remove(node)
+    }
+
+    /**
+     * Get a melon node off of a node identifier
+     *
+     * @param nodeId The node identifier
+     * @return The melon node with the node identifier
+     */
+    fun getMelonNode(nodeId: String) {
+        thread.ensureMainThread()
     }
 }

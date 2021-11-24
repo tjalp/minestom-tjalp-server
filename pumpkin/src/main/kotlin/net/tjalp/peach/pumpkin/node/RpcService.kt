@@ -2,6 +2,7 @@ package net.tjalp.peach.pumpkin.node
 
 import io.grpc.Server
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
+import net.tjalp.peach.peel.network.ServerNodeInterceptor
 import net.tjalp.peach.pumpkin.PumpkinServer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -20,6 +21,12 @@ class RpcService(
     private val builder: NettyServerBuilder = NettyServerBuilder.forPort(port)
     private val logger; get() = pumpkin.logger
     private val lock: Any = Any()
+
+    /**
+     * The [ServerNodeInterceptor] instance used to
+     * validate and verify incoming connections.
+     */
+    val nodeInterceptor = ServerNodeInterceptor(pumpkin.logger)
 
     init {
         registerDefaults()
@@ -78,6 +85,7 @@ class RpcService(
     private fun registerDefaults() {
         builder.apply {
             intercept(PumpkinSyncInterceptor(pumpkin))
+            intercept(nodeInterceptor)
         }
     }
 }

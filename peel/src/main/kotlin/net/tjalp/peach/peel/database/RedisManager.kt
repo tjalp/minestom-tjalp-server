@@ -27,10 +27,6 @@ import kotlin.reflect.KClass
  *
  * Redis Querying is performed using [RedisReactiveCommands],
  * which is obtained by calling the [query] method.
- *
- * Copyright 2019-2021 (c) Exodius Studios. All Rights Reserved.
- *
- * @author Jøøls
  */
 class RedisManager(
     logger: Logger,

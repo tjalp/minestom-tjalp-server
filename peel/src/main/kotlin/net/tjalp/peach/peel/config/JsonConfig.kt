@@ -6,10 +6,6 @@ import java.io.File
 
 /**
  * Each instance of [JsonConfig] represents
- *
- * Copyright 2019-2021 (c) Exodius Studios. All Rights Reserved.
- *
- * @author Jøøls
  */
 class JsonConfig<T : Configurable>(private val file: File, private val type: Class<T>, create: Boolean = true) {
 

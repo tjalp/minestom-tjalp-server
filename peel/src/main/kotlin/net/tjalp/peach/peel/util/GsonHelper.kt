@@ -8,10 +8,6 @@ import com.google.gson.JsonObject
 /**
  * Helper class for using Gson functionality
  * within peach.
- *
- * Copyright 2019-2021 (c) Exodius Studios. All Rights Reserved.
- *
- * @author Jøøls
  */
 object GsonHelper {
 
