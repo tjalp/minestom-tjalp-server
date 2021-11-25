@@ -6,18 +6,12 @@ import net.tjalp.peach.peel.network.PeachRPC
 import net.tjalp.peach.proto.melon.Melon.*
 import net.tjalp.peach.proto.melon.MelonServiceGrpc.MelonServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
-import net.tjalp.peach.pumpkin.node.apple.AppleNode
-import net.tjalp.peach.pumpkin.node.apple.AppleServerNode
 import net.tjalp.peach.pumpkin.player.ConnectedPlayer
 import java.util.*
 
 class MelonService(
     private val pumpkin: PumpkinServer
 ) : MelonServiceImplBase() {
-
-    private val tempAppleNode: AppleNode = AppleServerNode(pumpkin, "apple-1", "localhost", 25000).also {
-        pumpkin.nodeService.register(it)
-    }
 
     override fun healthStatus(response: StreamObserver<Empty>): StreamObserver<MelonHealthReport> {
         return current().healthMonitor.listen(response)
@@ -37,7 +31,7 @@ class MelonService(
                 uniqueId = UUID.fromString(player.uniqueId),
                 username = player.username,
                 melonNode = melonNode,
-                appleNode = tempAppleNode // TODO Apple nodes
+                appleNode = pumpkin.nodeService.getAppleNode(player.currentAppleNode)!!
             )
         }
 
@@ -45,7 +39,7 @@ class MelonService(
             //.filter { it.isOnline }
             .map {
                 AppleNodeRegistration.newBuilder()
-                    .setNodeId(it.nodeId)
+                    .setNodeId(it.nodeIdentifier)
                     .setServer(it.server)
                     .setPort(it.port)
                     .build()
@@ -59,15 +53,26 @@ class MelonService(
         response.onCompleted()
     }
 
-    override fun playerHandshake(request: PlayerHandshakeRequest, response: StreamObserver<Empty>) {
+    override fun playerHandshake(request: PlayerHandshakeRequest, response: StreamObserver<PlayerHandshakeResponse>) {
+        val res = PlayerHandshakeResponse.newBuilder()
+        val targetAppleNode = pumpkin.nodeService.appleNodes.firstOrNull()
+
+        if (targetAppleNode == null) {
+            response.onNext(res.setTargetNodeIdentifier("").build())
+            response.onCompleted()
+            return
+        } else {
+            res.targetNodeIdentifier = targetAppleNode.nodeIdentifier
+        }
+
         pumpkin.playerService.register(
             UUID.fromString(request.uniqueId),
             request.username,
             current(),
-            tempAppleNode
+            targetAppleNode
         )
 
-        response.onNext(Empty.getDefaultInstance())
+        response.onNext(res.build())
         response.onCompleted()
     }
 

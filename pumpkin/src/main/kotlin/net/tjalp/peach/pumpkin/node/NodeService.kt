@@ -1,5 +1,9 @@
 package net.tjalp.peach.pumpkin.node
 
+import net.tjalp.peach.peel.APPLE_NODE_REGISTER
+import net.tjalp.peach.peel.APPLE_NODE_UNREGISTER
+import net.tjalp.peach.peel.signal.AppleNodeRegisterSignal
+import net.tjalp.peach.peel.signal.AppleNodeUnregisterSignal
 import net.tjalp.peach.pumpkin.PumpkinMainThread
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.apple.AppleNode
@@ -57,7 +61,7 @@ class NodeService(
      */
     fun register(node: MelonNode) {
         thread.ensureMainThread()
-        pumpkin.logger.info("Registering melon node (nodeId: ${node.nodeId})")
+        pumpkin.logger.info("Registering melon node (nodeId: ${node.nodeIdentifier})")
 
         // Register the players that are already on this melon node
         node.players.forEach {
@@ -79,7 +83,18 @@ class NodeService(
      */
     fun register(node: AppleNode) {
         thread.ensureMainThread()
+        pumpkin.logger.info("Registering apple node (nodeId: ${node.nodeIdentifier}, server: ${node.server}, port: ${node.port})")
+
         registeredAppleNodes.add(node)
+
+        // Send out redis signal
+        val signal = AppleNodeRegisterSignal().apply {
+            nodeIdentifier = node.nodeIdentifier
+            server = node.server
+            port = node.port
+        }
+
+        pumpkin.redis.publish(APPLE_NODE_REGISTER, signal).subscribe()
     }
 
     /**
@@ -89,7 +104,7 @@ class NodeService(
      */
     fun unregister(node: MelonNode) {
         thread.ensureMainThread()
-        pumpkin.logger.info("Unregistering melon node (nodeId: ${node.nodeId})")
+        pumpkin.logger.info("Unregistering melon node (nodeId: ${node.nodeIdentifier})")
 
         // Unregister all the players that are on this melon node
         node.players.forEach {
@@ -106,7 +121,16 @@ class NodeService(
      */
     fun unregister(node: AppleNode) {
         thread.ensureMainThread()
+        pumpkin.logger.info("Unregistering apple node (nodeId: ${node.nodeIdentifier})")
+
         registeredAppleNodes.remove(node)
+
+        // Send out redis signal
+        val signal = AppleNodeUnregisterSignal().apply {
+            nodeIdentifier = node.nodeIdentifier
+        }
+
+        pumpkin.redis.publish(APPLE_NODE_UNREGISTER, signal).subscribe()
     }
 
     /**
@@ -119,7 +143,7 @@ class NodeService(
         thread.ensureMainThread()
 
         return registeredMelonNodes.firstOrNull {
-            it.nodeId == nodeId
+            it.nodeIdentifier == nodeId
         }
     }
 
@@ -133,7 +157,7 @@ class NodeService(
         thread.ensureMainThread()
 
         return registeredAppleNodes.firstOrNull {
-            it.nodeId == nodeId
+            it.nodeIdentifier == nodeId
         }
     }
 }

@@ -17,7 +17,7 @@ class MelonHealthReporter(
 
     override fun openHealthStream() {
         GlobalScope.async {
-            melon.sendProxyHandshake()
+            melon.sendMelonHandshake()
             super.openHealthStream()
         }
     }

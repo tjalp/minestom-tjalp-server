@@ -93,7 +93,7 @@ class HealthMonitor<T>(val node: Node) {
         if(isOnline) return
         isOnline = true
 
-        logger.info("Connection to ${node.nodeId} opened")
+        logger.info("Connection to ${node.nodeIdentifier} opened")
 
         onConnectionOpen.onNext(report)
     }
@@ -107,7 +107,7 @@ class HealthMonitor<T>(val node: Node) {
         isOnline = false
         isNotifed = false
 
-        logger.info("Lost connection to ${node.nodeId}")
+        logger.info("Lost connection to ${node.nodeIdentifier}")
 
         onConnectionDrop.onNext(Unit)
     }

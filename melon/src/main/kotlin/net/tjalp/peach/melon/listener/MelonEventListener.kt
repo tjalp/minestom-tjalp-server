@@ -4,7 +4,6 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
-import com.velocitypowered.api.proxy.server.RegisteredServer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -16,11 +15,23 @@ class MelonEventListener(
     private val melon: MelonServer
 ) {
 
+    private val initialAppleNodeCache = HashMap<UUID, String>()
+
+    init {
+        melon.proxy.eventManager.register(melon, this)
+    }
+
     @Subscribe
     private fun onPlayerChooseInitialServer(event: PlayerChooseInitialServerEvent) {
-        val server = melon.proxy.allServers.firstOrNull()
+        val nodeId = initialAppleNodeCache.remove(event.player.uniqueId)
+        val server = melon.proxy.getServer(nodeId)
 
-        event.setInitialServer(server)
+        if (server.isEmpty) {
+            event.setInitialServer(null)
+            return
+        }
+
+        event.setInitialServer(server.get())
     }
 
     @Subscribe
@@ -31,7 +42,9 @@ class MelonEventListener(
             .build()
 
         runBlocking {
-            melon.rpcStub.playerHandshake(request)
+            val response = melon.rpcStub.playerHandshake(request)
+
+            initialAppleNodeCache[event.player.uniqueId] = response.targetNodeIdentifier
         }
     }
 

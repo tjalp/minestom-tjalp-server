@@ -12,7 +12,7 @@ interface Node : Comparable<Node>, Disposable {
      * The unique string that has been assigned to
      * this node by pumpkin
      */
-    val nodeId: String
+    val nodeIdentifier: String
 
     /**
      * Contains true when pumpkin is confident this

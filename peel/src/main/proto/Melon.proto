@@ -22,6 +22,10 @@ message PlayerHandshakeRequest {
     string username = 2;
 }
 
+message PlayerHandshakeResponse {
+    string target_node_identifier = 1;
+}
+
 message PlayerQuit {
     string unique_id = 1;
 }
@@ -44,7 +48,7 @@ service MelonService {
 
     rpc MelonHandshake (MelonHandshakeRequest) returns (MelonHandshakeResponse);
 
-    rpc PlayerHandshake (PlayerHandshakeRequest) returns (google.protobuf.Empty);
+    rpc PlayerHandshake (PlayerHandshakeRequest) returns (PlayerHandshakeResponse);
 
     rpc PlayerDisconnect (PlayerQuit) returns (google.protobuf.Empty);
 }

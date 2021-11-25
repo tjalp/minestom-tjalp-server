@@ -4,11 +4,12 @@ import io.grpc.ManagedChannel
 import net.tjalp.peach.apple.pit.config.AppleConfig
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
+import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
-import net.tjalp.peach.proto.apple.AppleServiceGrpc
-import net.tjalp.peach.proto.apple.AppleServiceGrpc.AppleServiceFutureStub
+import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
 import org.slf4j.Logger
+import java.util.*
 
 /**
  * This abstract class contains all the common
@@ -32,6 +33,11 @@ abstract class AppleServer {
     lateinit var rpcStub: AppleServiceCoroutineStub
 
     /**
+     * The heartbeat
+     */
+    lateinit var healthReporter: HealthReporter<Apple.AppleHealthReport>; private set
+
+    /**
      * The redis connection every server should
      * have.
      */
@@ -44,6 +50,11 @@ abstract class AppleServer {
      */
     val config: AppleConfig
         get() = appleConfig.data
+
+    /**
+     * The current apple node's identifier
+     */
+    val nodeIdentifier: String = UUID.randomUUID().toString() // TODO Better node identifier
 
     /**
      * Initialize the implementation. Must be called
@@ -65,7 +76,7 @@ abstract class AppleServer {
 
         // Initialize RPC
         rpcChannel = PeachRPC.createChannel(
-            nodeId = "apple-1",
+            nodeId = nodeIdentifier,
             logger = logger,
             config = config.pumpkin
         ).build()
@@ -74,6 +85,8 @@ abstract class AppleServer {
 
         // Initialize various services
         val redisDetails = config.redis
+
+        healthReporter = AppleHealthReporter(this)
         redis = RedisManager(
             logger,
             "apple",
@@ -81,6 +94,9 @@ abstract class AppleServer {
             redisDetails.port,
             redisDetails.password
         )
+
+        healthReporter.start()
+        healthReporter.connect() // TODO Connect on redis signal from pumpkin
     }
 
     /**
@@ -92,7 +108,22 @@ abstract class AppleServer {
     open fun shutdown() {
         logger.info("Shutting down AppleServer")
 
+        healthReporter.stop()
         redis.dispose()
+    }
+
+    /**
+     * Send the proxy handshake to pumpkin
+     * to register the current melon node
+     */
+    internal suspend fun sendAppleHandshake() {
+        val request = Apple.AppleHandshakeRequest.newBuilder()
+            .setNodeIdentifier(nodeIdentifier)
+            .setServer("localhost") // TODO REALLY MAKE THIS BETTER
+            .setPort(25000) // TODO THIS TOO
+
+        logger.info("Sending apple handshake")
+        val response = rpcStub.appleHandshake(request.build())
     }
 
     companion object {
