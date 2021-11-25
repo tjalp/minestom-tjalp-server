@@ -1,6 +1,7 @@
 package net.tjalp.peach.melon
 
 import com.google.inject.Inject
+import com.google.protobuf.kotlin.toByteStringUtf8
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
@@ -22,6 +23,7 @@ import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
 import org.slf4j.Logger
 import java.io.File
 import java.net.InetSocketAddress
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 @Plugin(
@@ -99,6 +101,9 @@ class MelonServer {
             redisDetails.password
         )
 
+        // Set the secret
+        setVelocitySecret()
+
         // Send the proxy handshake when the connection is opened
         healthReporter.onConnectionOpen.subscribe {
             //sendProxyHandshake()
@@ -148,6 +153,18 @@ class MelonServer {
         response.appleNodeRegistrationList.forEach {
             logger.info("Registering server (nodeId: ${it.nodeId})")
             registerAppleNode(it.nodeId, it.server, it.port)
+        }
+    }
+
+    /**
+     * Set the Velocity secret from redis
+     */
+    private fun setVelocitySecret() {
+        redis.query().get("velocitySecret").subscribe { secret ->
+            val clazz = Class.forName("com.velocitypowered.proxy.config.VelocityConfiguration")
+            val field = clazz.getDeclaredField("forwardingSecret")
+            field.isAccessible = true
+            field.set(proxy.configuration, secret.toByteArray(StandardCharsets.UTF_8))
         }
     }
 }

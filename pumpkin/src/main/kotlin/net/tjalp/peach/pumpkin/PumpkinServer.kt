@@ -72,9 +72,8 @@ class PumpkinServer {
         nodeService.setup()
         playerService.setup()
 
-        // TODO Set random Velocity secret
         redis.transactionLegacy {
-            set("velocitySecret", "OpkUJU3FGM3I").subscribe()
+            set("velocitySecret", UUID.randomUUID().toString()).subscribe() // TODO Better Velocity secret
         }.subscribe()
 
         rpcService.start()
