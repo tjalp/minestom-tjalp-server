@@ -8,12 +8,12 @@ message MelonHealthReport {
 
 }
 
-message ProxyHandshakeRequest {
+message MelonHandshakeRequest {
     string node_identifier = 1;
     repeated LocalPlayer player = 2;
 }
 
-message ProxyHandshakeResponse {
+message MelonHandshakeResponse {
     repeated AppleNodeRegistration apple_node_registration = 1;
 }
 
@@ -42,7 +42,7 @@ service MelonService {
 
     rpc HealthStatus (stream MelonHealthReport) returns (google.protobuf.Empty);
 
-    rpc ProxyHandshake (ProxyHandshakeRequest) returns (ProxyHandshakeResponse);
+    rpc MelonHandshake (MelonHandshakeRequest) returns (MelonHandshakeResponse);
 
     rpc PlayerHandshake (PlayerHandshakeRequest) returns (google.protobuf.Empty);
 

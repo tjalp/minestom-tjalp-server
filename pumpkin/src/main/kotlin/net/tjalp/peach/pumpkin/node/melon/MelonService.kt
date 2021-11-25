@@ -3,7 +3,7 @@ package net.tjalp.peach.pumpkin.node.melon
 import com.google.protobuf.Empty
 import io.grpc.stub.StreamObserver
 import net.tjalp.peach.peel.network.PeachRPC
-import net.tjalp.peach.proto.melon.Melon
+import net.tjalp.peach.proto.melon.Melon.*
 import net.tjalp.peach.proto.melon.MelonServiceGrpc.MelonServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.apple.AppleNode
@@ -19,13 +19,13 @@ class MelonService(
         pumpkin.nodeService.register(it)
     }
 
-    override fun healthStatus(response: StreamObserver<Empty>): StreamObserver<Melon.MelonHealthReport> {
+    override fun healthStatus(response: StreamObserver<Empty>): StreamObserver<MelonHealthReport> {
         return current().healthMonitor.listen(response)
     }
 
-    override fun proxyHandshake(
-        request: Melon.ProxyHandshakeRequest,
-        response: StreamObserver<Melon.ProxyHandshakeResponse>
+    override fun melonHandshake(
+        request: MelonHandshakeRequest,
+        response: StreamObserver<MelonHandshakeResponse>
     ) {
         val melonNode = MelonServerNode(pumpkin, request.nodeIdentifier)
 
@@ -44,14 +44,14 @@ class MelonService(
         val appleNodeRegistrations = pumpkin.nodeService.appleNodes
             //.filter { it.isOnline }
             .map {
-                Melon.AppleNodeRegistration.newBuilder()
+                AppleNodeRegistration.newBuilder()
                     .setNodeId(it.nodeId)
                     .setServer(it.server)
                     .setPort(it.port)
                     .build()
             }
 
-        val res = Melon.ProxyHandshakeResponse.newBuilder()
+        val res = MelonHandshakeResponse.newBuilder()
             .addAllAppleNodeRegistration(appleNodeRegistrations)
             .build()
 
@@ -59,7 +59,7 @@ class MelonService(
         response.onCompleted()
     }
 
-    override fun playerHandshake(request: Melon.PlayerHandshakeRequest, response: StreamObserver<Empty>) {
+    override fun playerHandshake(request: PlayerHandshakeRequest, response: StreamObserver<Empty>) {
         pumpkin.playerService.register(
             UUID.fromString(request.uniqueId),
             request.username,
@@ -71,7 +71,7 @@ class MelonService(
         response.onCompleted()
     }
 
-    override fun playerDisconnect(request: Melon.PlayerQuit, response: StreamObserver<Empty>) {
+    override fun playerDisconnect(request: PlayerQuit, response: StreamObserver<Empty>) {
         val player = pumpkin.playerService.getPlayer(UUID.fromString(request.uniqueId))
 
         if (player != null) {
@@ -83,11 +83,11 @@ class MelonService(
     }
 
     /**
-     * Resolves the Flagship instance that sent
+     * Resolves the melon instance that sent
      * a call by parsing the Node ID from the
      * current context
      *
-     * @return The flagship node who sent the request
+     * @return The melon node which sent the request
      */
     private fun current() : MelonNode {
         return pumpkin.nodeService.getMelonNode(PeachRPC.NODE_ID_CTX.get())!!
