@@ -48,6 +48,8 @@ subprojects {
         api "org.jetbrains.kotlin:kotlin-stdlib:${project.lib_kotlin_version}"
     }
 
+    tasks.build.dependsOn(shadowJar)
+
     shadowJar {
         archiveClassifier.set('')
         archiveVersion.set('')
