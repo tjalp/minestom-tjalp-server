@@ -9,7 +9,8 @@ message MelonHealthReport {
 }
 
 message ProxyHandshakeRequest {
-    repeated LocalPlayer player = 1;
+    string node_identifier = 1;
+    repeated LocalPlayer player = 2;
 }
 
 message ProxyHandshakeResponse {

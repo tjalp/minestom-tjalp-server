@@ -22,6 +22,7 @@ import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
 import org.slf4j.Logger
 import java.io.File
 import java.net.InetSocketAddress
+import java.util.*
 
 @Plugin(
     id = "melon",
@@ -64,6 +65,11 @@ class MelonServer {
     lateinit var redis: RedisManager; private set
 
     /**
+     * The current node identifier
+     */
+    val nodeIdentifier: String = UUID.randomUUID().toString() // TODO Better node identifier
+
+    /**
      * The melon config
      */
     val config: MelonConfig
@@ -74,7 +80,7 @@ class MelonServer {
         melonConfig = JsonConfig(File("config.json"), MelonConfig::class.java)
 
         rpcChannel = PeachRPC.createChannel(
-            "melon", // TODO fix nodeIds
+            nodeIdentifier,
             logger = logger,
             config = config.pumpkin
         ).build()
@@ -87,7 +93,7 @@ class MelonServer {
         healthReporter = MelonHealthReporter(this)
         redis = RedisManager(
             logger,
-            "melon", // TODO fix nodeIds
+            nodeIdentifier,
             redisDetails.server,
             redisDetails.port,
             redisDetails.password
@@ -95,7 +101,7 @@ class MelonServer {
 
         // Send the proxy handshake when the connection is opened
         healthReporter.onConnectionOpen.subscribe {
-            sendProxyHandshake()
+            //sendProxyHandshake()
         }
 
         healthReporter.start()
@@ -116,29 +122,32 @@ class MelonServer {
     }
 
     /**
-     * Register a server globally (on all proxies)
+     * Register an apple node
      *
      * @param id the server id to use
      * @param address the target server address
      * @param port the target server port
      */
-    private fun registerServer(id: String, address: String, port: Int) {
+    private fun registerAppleNode(id: String, address: String, port: Int) {
         val inet = InetSocketAddress(address, port)
         proxy.registerServer(ServerInfo(id, inet))
     }
 
-    private fun sendProxyHandshake() {
+    /**
+     * Send the proxy handshake to pumpkin
+     * to register the current melon node
+     */
+    internal suspend fun sendProxyHandshake() {
         val request = ProxyHandshakeRequest.newBuilder()
+            .setNodeIdentifier(nodeIdentifier)
 
-        GlobalScope.async {
-            logger.info("Sending proxy handshake")
-            val response = rpcStub.proxyHandshake(request.build())
-            logger.info("Registering servers")
+        logger.info("Sending proxy handshake")
+        val response = rpcStub.proxyHandshake(request.build())
+        logger.info("Registering servers")
 
-            response.appleNodeRegistrationList.forEach {
-                logger.info("Registering server (nodeId: ${it.nodeId})")
-                registerServer(it.nodeId, it.server, it.port)
-            }
+        response.appleNodeRegistrationList.forEach {
+            logger.info("Registering server (nodeId: ${it.nodeId})")
+            registerAppleNode(it.nodeId, it.server, it.port)
         }
     }
 }

@@ -114,7 +114,7 @@ abstract class HealthReporter<T>(
      * connection to pumpkin in order to
      * send health update reports
      */
-    private fun openHealthStream() {
+    open fun openHealthStream() {
         logger.info("Attempting new connection")
 
         // Instantiate a new call and await the

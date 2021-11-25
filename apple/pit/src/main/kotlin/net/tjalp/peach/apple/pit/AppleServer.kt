@@ -65,6 +65,7 @@ abstract class AppleServer {
 
         // Initialize RPC
         rpcChannel = PeachRPC.createChannel(
+            nodeId = "apple-1",
             logger = logger,
             config = config.pumpkin
         ).build()

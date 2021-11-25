@@ -2,6 +2,7 @@ package net.tjalp.peach.pumpkin.node.melon
 
 import com.google.protobuf.Empty
 import io.grpc.stub.StreamObserver
+import net.tjalp.peach.peel.network.PeachRPC
 import net.tjalp.peach.proto.melon.Melon
 import net.tjalp.peach.proto.melon.MelonServiceGrpc.MelonServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
@@ -14,20 +15,19 @@ class MelonService(
     private val pumpkin: PumpkinServer
 ) : MelonServiceImplBase() {
 
-    private val tempMelonNode: MelonNode = MelonServerNode(pumpkin, "melon-1")
     private val tempAppleNode: AppleNode = AppleServerNode(pumpkin, "apple-1", "localhost", 25000).also {
         pumpkin.nodeService.register(it)
     }
 
     override fun healthStatus(response: StreamObserver<Empty>): StreamObserver<Melon.MelonHealthReport> {
-        return tempMelonNode.healthMonitor.listen(response)
+        return current().healthMonitor.listen(response)
     }
 
     override fun proxyHandshake(
         request: Melon.ProxyHandshakeRequest,
         response: StreamObserver<Melon.ProxyHandshakeResponse>
     ) {
-        val melonNode = MelonServerNode(pumpkin, UUID.randomUUID().toString())
+        val melonNode = MelonServerNode(pumpkin, request.nodeIdentifier)
 
         // Register the melon node
         pumpkin.nodeService.register(melonNode)
@@ -63,7 +63,7 @@ class MelonService(
         pumpkin.playerService.register(
             UUID.fromString(request.uniqueId),
             request.username,
-            tempMelonNode,
+            current(),
             tempAppleNode
         )
 
@@ -80,5 +80,16 @@ class MelonService(
 
         response.onNext(Empty.getDefaultInstance())
         response.onCompleted()
+    }
+
+    /**
+     * Resolves the Flagship instance that sent
+     * a call by parsing the Node ID from the
+     * current context
+     *
+     * @return The flagship node who sent the request
+     */
+    private fun current() : MelonNode {
+        return pumpkin.nodeService.getMelonNode(PeachRPC.NODE_ID_CTX.get())!!
     }
 }

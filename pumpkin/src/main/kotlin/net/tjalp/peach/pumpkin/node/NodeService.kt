@@ -113,9 +113,27 @@ class NodeService(
      * Get a melon node off of a node identifier
      *
      * @param nodeId The node identifier
-     * @return The melon node with the node identifier
+     * @return The melon node associated with the node identifier
      */
-    fun getMelonNode(nodeId: String) {
+    fun getMelonNode(nodeId: String): MelonNode? {
         thread.ensureMainThread()
+
+        return registeredMelonNodes.firstOrNull {
+            it.nodeId == nodeId
+        }
+    }
+
+    /**
+     * Get an apple node off of a node identifier
+     *
+     * @param nodeId The node identifier
+     * @return The apple node associated with the node identifier
+     */
+    fun getAppleNode(nodeId: String): AppleNode? {
+        thread.ensureMainThread()
+
+        return registeredAppleNodes.firstOrNull {
+            it.nodeId == nodeId
+        }
     }
 }
