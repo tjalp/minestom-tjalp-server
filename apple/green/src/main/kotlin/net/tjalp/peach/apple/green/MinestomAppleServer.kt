@@ -77,7 +77,7 @@ class MinestomAppleServer : AppleServer() {
         if (velocitySecret != null) VelocityProxy.enable(velocitySecret) else BungeeCordProxy.enable()
 
         // Start the server
-        server.start("0.0.0.0", 25000)
+        server.start("0.0.0.0", config.port)
     }
 
     /**

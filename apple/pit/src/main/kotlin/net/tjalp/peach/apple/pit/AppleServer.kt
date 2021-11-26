@@ -119,8 +119,7 @@ abstract class AppleServer {
     internal suspend fun sendAppleHandshake() {
         val request = Apple.AppleHandshakeRequest.newBuilder()
             .setNodeIdentifier(nodeIdentifier)
-            .setServer("localhost") // TODO REALLY MAKE THIS BETTER
-            .setPort(25000) // TODO THIS TOO
+            .setPort(config.port)
 
         logger.info("Sending apple handshake")
         val response = rpcStub.appleHandshake(request.build())

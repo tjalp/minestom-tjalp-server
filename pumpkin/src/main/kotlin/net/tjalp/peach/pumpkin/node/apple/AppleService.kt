@@ -8,6 +8,7 @@ import net.tjalp.peach.proto.apple.Apple.AppleHandshakeRequest
 import net.tjalp.peach.proto.apple.Apple.AppleHandshakeResponse
 import net.tjalp.peach.proto.apple.AppleServiceGrpc.AppleServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
+import java.net.InetSocketAddress
 
 class AppleService(
     private val pumpkin: PumpkinServer
@@ -18,11 +19,12 @@ class AppleService(
     }
 
     override fun appleHandshake(request: AppleHandshakeRequest, response: StreamObserver<AppleHandshakeResponse>) {
+        val socket = currentInetSocketAddress()
         val appleNode = AppleServerNode(
             pumpkin,
             request.nodeIdentifier,
-            request.server,
-            request.port
+            socket.address.hostAddress,
+            request.port,
         )
 
         pumpkin.nodeService.register(appleNode)
@@ -41,7 +43,17 @@ class AppleService(
      *
      * @return The apple node which sent the request
      */
-    private fun current() : AppleNode {
+    private fun current(): AppleNode {
         return pumpkin.nodeService.getAppleNode(PeachRPC.NODE_ID_CTX.get())!!
+    }
+
+    /**
+     * Resolves the address the request was
+     * made from
+     *
+     * @return The [InetSocketAddress] of this request
+     */
+    private fun currentInetSocketAddress(): InetSocketAddress {
+        return PeachRPC.INET_SOCKET_CTX.get()
     }
 }

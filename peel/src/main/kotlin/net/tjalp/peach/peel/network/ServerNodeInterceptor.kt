@@ -44,9 +44,10 @@ class ServerNodeInterceptor(
             logger.info("Received $callName call from $nodeId")
         }
 
-        // Append the Node ID to the context
+        // Append the Node ID, address & port to the context
         val context = Context.current()
             .withValue(PeachRPC.NODE_ID_CTX, nodeId)
+            .withValue(PeachRPC.INET_SOCKET_CTX, sockAddress)
 
         return Contexts.interceptCall(context, call, headers, next)
     }

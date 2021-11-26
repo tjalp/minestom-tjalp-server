@@ -15,4 +15,9 @@ abstract class AppleConfig : Configurable {
      * Redis connection instructions
      */
     var redis: RedisDetails = RedisDetails()
+
+    /**
+     * The current node's port
+     */
+    var port: Int = 25000
 }

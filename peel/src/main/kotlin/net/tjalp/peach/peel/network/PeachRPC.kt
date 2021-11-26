@@ -6,11 +6,13 @@ import io.grpc.Metadata
 import io.grpc.stub.StreamObserver
 import net.tjalp.peach.peel.config.PumpkinDetails
 import org.slf4j.Logger
+import java.net.InetSocketAddress
 
 object PeachRPC {
 
     val NODE_ID_KEY = metadataKey("Node")
     val NODE_ID_CTX = contextKey<String>("Node Identifier")
+    val INET_SOCKET_CTX = contextKey<InetSocketAddress>("Inet Socket Address")
 
     // Key generators
     private fun metadataKey(name: String) : Metadata.Key<String> = Metadata.Key.of(name, Metadata.ASCII_STRING_MARSHALLER)
