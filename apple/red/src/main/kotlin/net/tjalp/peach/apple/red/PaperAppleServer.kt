@@ -6,6 +6,7 @@ import net.tjalp.peach.apple.red.listener.AppleEventListener
 import net.tjalp.peach.peel.config.JsonConfig
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 class PaperAppleServer : AppleServer() {
 
@@ -20,6 +21,14 @@ class PaperAppleServer : AppleServer() {
 
     override fun start() {
         super.start()
+
+        // Enable the proxy (must be done after redis has connected)
+        redis.query().get("velocitySecret").subscribe { secret ->
+            val clazz = Class.forName("com.destroystokyo.paper.PaperConfig")
+            val field = clazz.getDeclaredField("velocitySecretKey")
+            field.isAccessible = true
+            field.set(null, secret.toByteArray(StandardCharsets.UTF_8))
+        }
 
         AppleEventListener(this)
     }

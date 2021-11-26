@@ -6,10 +6,10 @@ import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
 import org.slf4j.Logger
-import java.util.*
 
 /**
  * This abstract class contains all the common
@@ -54,7 +54,7 @@ abstract class AppleServer {
     /**
      * The current apple node's identifier
      */
-    val nodeIdentifier: String = UUID.randomUUID().toString() // TODO Better node identifier
+    val nodeIdentifier: String = "a-${generateRandomString(6)}"
 
     /**
      * Initialize the implementation. Must be called

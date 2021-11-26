@@ -15,6 +15,7 @@ import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.proto.melon.Melon.MelonHandshakeRequest
 import net.tjalp.peach.proto.melon.Melon.MelonHealthReport
 import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
@@ -67,7 +68,7 @@ class MelonServer {
     /**
      * The current node identifier
      */
-    val nodeIdentifier: String = UUID.randomUUID().toString() // TODO Better node identifier
+    val nodeIdentifier: String = "m-${generateRandomString(6)}"
 
     /**
      * The melon config

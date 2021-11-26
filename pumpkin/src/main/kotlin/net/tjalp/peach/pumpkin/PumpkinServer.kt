@@ -3,6 +3,7 @@ package net.tjalp.peach.pumpkin
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.exception.FailedOperationException
+import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.pumpkin.config.PumpkinConfig
 import net.tjalp.peach.pumpkin.node.NodeService
 import net.tjalp.peach.pumpkin.node.RpcService
@@ -73,7 +74,7 @@ class PumpkinServer {
         playerService.setup()
 
         redis.transactionLegacy {
-            set("velocitySecret", UUID.randomUUID().toString()).subscribe() // TODO Better Velocity secret
+            set("velocitySecret", generateRandomString(12)).subscribe()
         }.subscribe()
 
         rpcService.start()
