@@ -17,9 +17,20 @@ message AppleHandshakeResponse {
 
 }
 
+message PlayerSwitchRequest {
+    string player_unique_identifier = 1;
+    string apple_node_identifier = 2;
+}
+
+message PlayerSwitchResponse {
+    bool success = 1;
+}
+
 service AppleService {
 
     rpc HealthStatus (stream AppleHealthReport) returns (google.protobuf.Empty);
 
     rpc AppleHandshake (AppleHandshakeRequest) returns (AppleHandshakeResponse);
+
+    rpc PlayerSwitch (PlayerSwitchRequest) returns (PlayerSwitchResponse);
 }

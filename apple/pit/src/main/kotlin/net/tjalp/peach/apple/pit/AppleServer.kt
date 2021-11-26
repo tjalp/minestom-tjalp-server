@@ -1,6 +1,8 @@
 package net.tjalp.peach.apple.pit
 
 import io.grpc.ManagedChannel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import net.tjalp.peach.apple.pit.config.AppleConfig
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
@@ -10,6 +12,7 @@ import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
 import org.slf4j.Logger
+import java.util.*
 
 /**
  * This abstract class contains all the common
@@ -123,6 +126,28 @@ abstract class AppleServer {
 
         logger.info("Sending apple handshake")
         val response = rpcStub.appleHandshake(request.build())
+    }
+
+    /**
+     * Send the current player to another apple node
+     * TODO Use this an extension on a profile
+     *
+     * @param uniqueId The player's unique identifier
+     * @param nodeId The target node's unique identifier
+     */
+    fun switchPlayer(uniqueId: UUID, nodeId: String) {
+        GlobalScope.async {
+            val request = Apple.PlayerSwitchRequest.newBuilder()
+                .setPlayerUniqueIdentifier(uniqueId.toString())
+                .setAppleNodeIdentifier(nodeId)
+                .build()
+
+            val response = rpcStub.playerSwitch(request)
+
+            if (!response.success) {
+                logger.info("Failed to switch player")
+            }
+        }
     }
 
     companion object {

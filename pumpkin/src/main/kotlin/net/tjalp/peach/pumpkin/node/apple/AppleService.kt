@@ -1,6 +1,7 @@
 package net.tjalp.peach.pumpkin.node.apple
 
 import com.google.protobuf.Empty
+import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import net.tjalp.peach.peel.network.PeachRPC
 import net.tjalp.peach.proto.apple.Apple
@@ -9,6 +10,7 @@ import net.tjalp.peach.proto.apple.Apple.AppleHandshakeResponse
 import net.tjalp.peach.proto.apple.AppleServiceGrpc.AppleServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
 import java.net.InetSocketAddress
+import java.util.*
 
 class AppleService(
     private val pumpkin: PumpkinServer
@@ -34,6 +36,41 @@ class AppleService(
 
         response.onNext(res)
         response.onCompleted()
+    }
+
+    override fun playerSwitch(
+        request: Apple.PlayerSwitchRequest,
+        response: StreamObserver<Apple.PlayerSwitchResponse>
+    ) {
+        val uniqueId = UUID.fromString(request.playerUniqueIdentifier)
+        val player = pumpkin.playerService.getPlayer(uniqueId)
+        val targetNode = pumpkin.nodeService.getAppleNode(request.appleNodeIdentifier)
+
+        if (player == null) {
+            response.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription("Unknown player $uniqueId")
+                    .asRuntimeException()
+            )
+            return
+        }
+
+        if (targetNode == null) {
+            val res = Apple.PlayerSwitchResponse.newBuilder()
+                .setSuccess(false)
+                .build()
+
+            response.onNext(res)
+            response.onCompleted()
+        } else {
+            targetNode.connect(player)
+            val res = Apple.PlayerSwitchResponse.newBuilder()
+                .setSuccess(true)
+                .build()
+
+            response.onNext(res)
+            response.onCompleted()
+        }
     }
 
     /**

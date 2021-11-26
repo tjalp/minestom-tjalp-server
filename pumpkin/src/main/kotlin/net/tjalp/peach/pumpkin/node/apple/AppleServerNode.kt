@@ -36,6 +36,10 @@ class AppleServerNode(
             }
     }
 
+    override fun connect(player: PeachPlayer) {
+        pumpkin.playerService.switch(player, this)
+    }
+
     override fun dispose() {
         healthMonitor.close()
     }

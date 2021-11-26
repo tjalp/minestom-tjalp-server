@@ -1,10 +1,13 @@
 package net.tjalp.peach.pumpkin.player
 
+import net.tjalp.peach.peel.PLAYER_SWITCH
+import net.tjalp.peach.peel.signal.PlayerSwitchSignal
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.apple.AppleNode
 import net.tjalp.peach.pumpkin.node.apple.AppleServerNode
 import net.tjalp.peach.pumpkin.node.melon.MelonNode
 import net.tjalp.peach.pumpkin.node.melon.MelonServerNode
+import reactor.core.publisher.Mono
 import java.util.*
 
 class PlayerService(
@@ -17,6 +20,29 @@ class PlayerService(
 
     fun setup() {
         pumpkin.logger.info("Setting up player service")
+    }
+
+    fun switch(player: PeachPlayer, node: AppleNode) {
+        thread.ensureMainThread()
+
+        if (!node.isOnline) {
+            throw IllegalStateException("Target Apple Node is not online!")
+        } else {
+            if (player.currentAppleNode != node) {
+
+                (player.currentAppleNode as AppleServerNode).connectedPlayers.remove(player)
+                (node as AppleServerNode).connectedPlayers.add(player as ConnectedPlayer)
+
+                player.currentAppleNode = node
+
+                val signal = PlayerSwitchSignal().apply {
+                    this.uniqueId = player.uniqueId
+                    this.nodeId = node.nodeIdentifier
+                }
+
+                pumpkin.redis.publish(PLAYER_SWITCH, signal).subscribe()
+            }
+        }
     }
 
     fun getPlayer(uniqueId: UUID): PeachPlayer? {

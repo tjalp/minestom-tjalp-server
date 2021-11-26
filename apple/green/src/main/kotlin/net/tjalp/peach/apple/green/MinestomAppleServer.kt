@@ -6,6 +6,7 @@ import net.minestom.server.extras.velocity.VelocityProxy
 import net.minestom.server.instance.Instance
 import net.tjalp.peach.apple.green.command.SkinCommand
 import net.tjalp.peach.apple.green.command.StopCommand
+import net.tjalp.peach.apple.green.command.SwitchCommand
 import net.tjalp.peach.apple.green.command.TeleportCommand
 import net.tjalp.peach.apple.green.config.MinestomAppleConfig
 import net.tjalp.peach.apple.green.generator.SimpleGenerator
@@ -89,6 +90,7 @@ class MinestomAppleServer : AppleServer() {
         man.register(GamemodeCommand())
         man.register(SkinCommand())
         man.register(StopCommand())
+        man.register(SwitchCommand())
         man.register(TeleportCommand())
     }
 }
