@@ -22,10 +22,12 @@ class AppleService(
 
     override fun appleHandshake(request: AppleHandshakeRequest, response: StreamObserver<AppleHandshakeResponse>) {
         val socket = currentInetSocketAddress()
+        val hostAddress = socket.address.hostAddress
         val appleNode = AppleServerNode(
             pumpkin,
             request.nodeIdentifier,
-            socket.address.hostAddress,
+            // We're running in a container, so 127.0.0.1 is redundant
+            if (hostAddress.equals("127.0.0.1")) "host.docker.internal" else hostAddress,
             request.port,
         )
 
