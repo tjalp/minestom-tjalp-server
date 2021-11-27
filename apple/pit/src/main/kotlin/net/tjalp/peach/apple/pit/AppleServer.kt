@@ -2,7 +2,7 @@ package net.tjalp.peach.apple.pit
 
 import io.grpc.ManagedChannel
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import net.tjalp.peach.apple.pit.config.AppleConfig
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
@@ -136,7 +136,7 @@ abstract class AppleServer {
      * @param nodeId The target node's unique identifier
      */
     fun switchPlayer(uniqueId: UUID, nodeId: String) {
-        GlobalScope.async {
+        GlobalScope.launch {
             val request = Apple.PlayerSwitchRequest.newBuilder()
                 .setPlayerUniqueIdentifier(uniqueId.toString())
                 .setAppleNodeIdentifier(nodeId)

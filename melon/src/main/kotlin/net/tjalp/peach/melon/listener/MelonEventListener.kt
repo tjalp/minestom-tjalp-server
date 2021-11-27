@@ -5,7 +5,7 @@ import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.tjalp.peach.melon.MelonServer
 import net.tjalp.peach.proto.melon.Melon
@@ -54,7 +54,7 @@ class MelonEventListener(
             .setUniqueId(event.player.uniqueId.toString())
             .build()
 
-        GlobalScope.async {
+        GlobalScope.launch {
             melon.rpcStub.playerDisconnect(request)
         }
     }

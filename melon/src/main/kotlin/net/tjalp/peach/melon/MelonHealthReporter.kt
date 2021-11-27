@@ -3,7 +3,7 @@ package net.tjalp.peach.melon
 import com.google.protobuf.Empty
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.proto.melon.Melon.MelonHealthReport
 import net.tjalp.peach.proto.melon.MelonServiceGrpc
@@ -16,7 +16,7 @@ class MelonHealthReporter(
     private val rpcStub: MelonServiceStub = MelonServiceGrpc.newStub(melon.rpcChannel)
 
     override fun openHealthStream() {
-        GlobalScope.async {
+        GlobalScope.launch {
             melon.sendMelonHandshake()
             super.openHealthStream()
         }

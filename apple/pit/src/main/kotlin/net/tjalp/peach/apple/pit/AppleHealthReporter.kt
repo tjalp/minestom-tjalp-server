@@ -3,7 +3,7 @@ package net.tjalp.peach.apple.pit
 import com.google.protobuf.Empty
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpc
@@ -15,7 +15,7 @@ class AppleHealthReporter(
     private val rpcStub: AppleServiceGrpc.AppleServiceStub = AppleServiceGrpc.newStub(apple.rpcChannel)
 
     override fun openHealthStream() {
-        GlobalScope.async {
+        GlobalScope.launch {
             apple.sendAppleHandshake()
             super.openHealthStream()
         }
