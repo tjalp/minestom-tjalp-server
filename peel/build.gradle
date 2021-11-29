@@ -9,6 +9,8 @@ dependencies {
     api "com.google.protobuf:protobuf-kotlin:${project.lib_protobuf_kotlin_version}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.lib_kotlinx_version}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${project.lib_kotlinx_version}"
+    api "com.github.docker-java:docker-java-core:${project.lib_docker_java_version}"
+    api "com.github.docker-java:docker-java-transport-httpclient5:${project.lib_docker_java_version}"
 }
 
 shadowJar.enabled = false

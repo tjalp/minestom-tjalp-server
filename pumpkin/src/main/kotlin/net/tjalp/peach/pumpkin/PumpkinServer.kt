@@ -5,6 +5,8 @@ import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.exception.FailedOperationException
 import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.pumpkin.config.PumpkinConfig
+import net.tjalp.peach.pumpkin.node.DockerService
+import net.tjalp.peach.pumpkin.node.Node.Type.*
 import net.tjalp.peach.pumpkin.node.NodeService
 import net.tjalp.peach.pumpkin.node.RpcService
 import net.tjalp.peach.pumpkin.player.PlayerService
@@ -29,6 +31,7 @@ class PumpkinServer {
     lateinit var nodeService: NodeService; private set
     lateinit var rpcService: RpcService; private set
     lateinit var playerService: PlayerService; private set
+    lateinit var dockerService: DockerService; private set
 
     /**
      * The main thread
@@ -68,10 +71,12 @@ class PumpkinServer {
         redis = RedisManager(logger, "pumpkin", redisDetails.server, redisDetails.port, redisDetails.password)
         rpcService = RpcService(this)
         playerService = PlayerService(this)
+        dockerService = DockerService(this)
 
         // Initialize services
         nodeService.setup()
         playerService.setup()
+        dockerService.setup()
 
         redis.transactionLegacy {
             set("velocitySecret", generateRandomString(12)).subscribe()
@@ -88,8 +93,11 @@ class PumpkinServer {
             while (isRunning) {
                 val scanner = Scanner(System.`in`)
 
-                if (scanner.nextLine() == "stop") {
-                    shutdown()
+                when (scanner.nextLine()) {
+                    "stop" -> shutdown()
+                    "melon" -> dockerService.createNode(MELON)
+                    "ag" -> dockerService.createNode(APPLE_GREEN)
+                    "ar" -> dockerService.createNode(APPLE_RED)
                 }
             }
         }

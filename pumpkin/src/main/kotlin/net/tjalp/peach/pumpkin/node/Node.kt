@@ -20,4 +20,11 @@ interface Node : Comparable<Node>, Disposable {
      */
     val isOnline: Boolean
 
+    enum class Type(val fullName: String, val shortName: String, val imageName: String) {
+        PUMPKIN("pumpkin", "p", "pumpkin"),
+        MELON("melon", "m", "melon"),
+        APPLE_GREEN("apple-green", "ag", "apple-green"),
+        APPLE_RED("apple-red", "ar", "apple-red");
+    }
+
 }
