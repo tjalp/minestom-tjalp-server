@@ -1,7 +1,6 @@
 package net.tjalp.peach.pumpkin.node
 
 import net.tjalp.peach.peel.config.NodeConfig
-import net.tjalp.peach.pumpkin.DockerNode
 import net.tjalp.peach.pumpkin.PumpkinServer
 
 class DockerService(

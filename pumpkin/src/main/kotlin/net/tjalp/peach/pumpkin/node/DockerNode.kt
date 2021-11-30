@@ -1,4 +1,4 @@
-package net.tjalp.peach.pumpkin
+package net.tjalp.peach.pumpkin.node
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.model.ExposedPort
@@ -13,7 +13,6 @@ import net.tjalp.peach.peel.config.DockerDetails
 import net.tjalp.peach.peel.config.NodeConfig
 import net.tjalp.peach.peel.util.GsonHelper
 import net.tjalp.peach.peel.util.generateRandomString
-import net.tjalp.peach.pumpkin.node.Node
 import java.time.Duration
 
 class DockerNode(
