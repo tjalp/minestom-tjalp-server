@@ -27,7 +27,7 @@ class AppleService(
             pumpkin,
             request.nodeIdentifier,
             // We're running in a container, so 127.0.0.1 is redundant
-            if (hostAddress.equals("127.0.0.1")) "host.docker.internal" else hostAddress,
+            if (hostAddress.equals("127.0.0.1")) "127.0.0.1" else hostAddress,
             request.port,
         )
 

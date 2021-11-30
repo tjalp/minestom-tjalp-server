@@ -58,12 +58,16 @@ class DockerNode(
      */
     fun createNode(
         type: Node.Type,
-        config: NodeConfig,
+        config: NodeConfig = NodeConfig(),
         nodeId: String = "${type.shortName}-${generateRandomString(6)}",
         port: Int = availablePorts.random(),
         memory: Long = 512L,
         maxCpuPercent: Long = 50
     ) {
+        if (port !in availablePorts) {
+            throw IllegalArgumentException("Port $port is not available on this docker node (${this.config.dockerHost.host})")
+        }
+
         val exposedPort = ExposedPort.tcp(port)
         val ports = Ports().apply {
             bind(exposedPort, Ports.Binding.bindPort(port))
@@ -74,6 +78,7 @@ class DockerNode(
             .withPortBindings(ports)
             .withAutoRemove(true)
             .withExtraHosts("host.docker.internal:host-gateway")
+            .withNetworkMode("host") // TODO Not make this host
 
         // Remove the port from the available ports of this docker node
         availablePorts.remove(port)

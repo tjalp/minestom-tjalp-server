@@ -9,7 +9,7 @@ class DockerDetails {
     /**
      * The target address for this docker node
      */
-    var server: String = "host.docker.internal"
+    var server: String = "127.0.0.1"
 
     /**
      * The target port for this docker node

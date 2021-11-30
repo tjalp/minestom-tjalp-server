@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
 class RedisManager(
     logger: Logger,
     val nodeId: String,
-    address: String = "host.docker.internal",
+    address: String = "127.0.0.1",
     port: Int = 6379,
     password: String = ""
 ) : Disposable {

@@ -62,7 +62,7 @@ abstract class AppleServer {
      * before [AppleServer.start]
      */
     open fun init() {
-        config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), AppleConfig::class.java)
+
     }
 
     /**
