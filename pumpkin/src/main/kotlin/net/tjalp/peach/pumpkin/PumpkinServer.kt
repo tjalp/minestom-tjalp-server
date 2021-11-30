@@ -1,6 +1,7 @@
 package net.tjalp.peach.pumpkin
 
 import net.tjalp.peach.peel.config.JsonConfig
+import net.tjalp.peach.peel.config.MelonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.exception.FailedOperationException
 import net.tjalp.peach.peel.util.generateRandomString
@@ -95,7 +96,7 @@ class PumpkinServer {
 
                 when (scanner.nextLine()) {
                     "stop" -> shutdown()
-                    "melon" -> dockerService.createNode(MELON)
+                    "melon" -> dockerService.createNode(MELON, MelonConfig())
                     "ag" -> dockerService.createNode(APPLE_GREEN)
                     "ar" -> dockerService.createNode(APPLE_RED)
                 }

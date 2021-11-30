@@ -4,6 +4,7 @@ import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
 import net.tjalp.peach.peel.config.JsonConfig
+import net.tjalp.peach.peel.util.GsonHelper
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -15,7 +16,9 @@ class PaperAppleServer : AppleServer() {
     override fun init() {
         super.init()
 
-        appleConfig = JsonConfig(File("config.json"), PaperAppleConfig::class.java)
+        // Override the apple config because there will be some custom values in here
+        config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), PaperAppleConfig::class.java)
+
         logger = plugin.slF4JLogger
     }
 

@@ -3,10 +3,10 @@ package net.tjalp.peach.peel.config
 /**
  * The details for the redis connection
  */
-class RedisDetails : Configurable {
+class RedisDetails {
 
     /** The target address for redis */
-    var server = "127.0.0.1"
+    var server = "host.docker.internal"
 
     /** The target port for redis */
     var port = 6379

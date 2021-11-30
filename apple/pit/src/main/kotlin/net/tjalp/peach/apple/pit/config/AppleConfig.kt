@@ -1,10 +1,10 @@
 package net.tjalp.peach.apple.pit.config
 
-import net.tjalp.peach.peel.config.Configurable
+import net.tjalp.peach.peel.config.NodeConfig
 import net.tjalp.peach.peel.config.PumpkinDetails
 import net.tjalp.peach.peel.config.RedisDetails
 
-abstract class AppleConfig : Configurable {
+abstract class AppleConfig : NodeConfig() {
 
     /**
      * The pumpkin details
@@ -15,9 +15,4 @@ abstract class AppleConfig : Configurable {
      * Redis connection instructions
      */
     var redis: RedisDetails = RedisDetails()
-
-    /**
-     * The current node's port
-     */
-    var port: Int = 25000
 }

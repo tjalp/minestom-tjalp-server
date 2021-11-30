@@ -1,5 +1,8 @@
 dependencies {
     api project(':peel')
+
+    api "com.github.docker-java:docker-java-core:${project.lib_docker_java_version}"
+    api "com.github.docker-java:docker-java-transport-httpclient5:${project.lib_docker_java_version}"
 }
 
 jar {

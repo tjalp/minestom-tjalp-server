@@ -4,7 +4,7 @@ package net.tjalp.peach.peel.config
  * The details for a server with docker
  * that can be used for nodes
  */
-class DockerDetails : Configurable {
+class DockerDetails {
 
     /**
      * The target address for this docker node

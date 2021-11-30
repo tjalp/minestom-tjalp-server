@@ -16,8 +16,7 @@ import net.tjalp.peach.apple.green.registry.OVERWORLD
 import net.tjalp.peach.apple.green.registry.registerBiomes
 import net.tjalp.peach.apple.green.registry.registerDimensions
 import net.tjalp.peach.apple.pit.AppleServer
-import net.tjalp.peach.peel.config.JsonConfig
-import java.io.File
+import net.tjalp.peach.peel.util.GsonHelper
 
 fun main(args: Array<String>) {
     val server = MinestomAppleServer()
@@ -38,7 +37,8 @@ class MinestomAppleServer : AppleServer() {
     override fun init() {
         super.init()
 
-        appleConfig = JsonConfig(File("config.json"), MinestomAppleConfig::class.java)
+        // Override the apple config because there will be some custom values in here
+        config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), MinestomAppleConfig::class.java)
 
         // Initialize the Minestom server
         server = MinecraftServer.init()

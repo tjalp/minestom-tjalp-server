@@ -1,5 +1,6 @@
 package net.tjalp.peach.pumpkin.node
 
+import net.tjalp.peach.peel.config.NodeConfig
 import net.tjalp.peach.pumpkin.DockerNode
 import net.tjalp.peach.pumpkin.PumpkinServer
 
@@ -23,7 +24,7 @@ class DockerService(
      *
      * @param type The node type
      */
-    fun createNode(type: Node.Type, dockerNode: DockerNode? = null) {
+    fun createNode(type: Node.Type, config: NodeConfig = NodeConfig(), dockerNode: DockerNode? = null) {
         if (dockerNode == null && nodes.isEmpty()) {
             pumpkin.logger.error("Tried to create a node, but there are no available docker nodes")
             return
@@ -31,6 +32,6 @@ class DockerService(
 
         val node = dockerNode ?: nodes.random()
 
-        node.createNode(type)
+        node.createNode(type, config)
     }
 }

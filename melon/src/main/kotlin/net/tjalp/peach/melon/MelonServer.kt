@@ -8,22 +8,19 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerInfo
 import io.grpc.ManagedChannel
-import net.tjalp.peach.melon.config.MelonConfig
 import net.tjalp.peach.melon.listener.MelonEventListener
 import net.tjalp.peach.melon.listener.MelonSignalListener
-import net.tjalp.peach.peel.config.JsonConfig
+import net.tjalp.peach.peel.config.MelonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
-import net.tjalp.peach.peel.util.generateRandomString
+import net.tjalp.peach.peel.util.GsonHelper
 import net.tjalp.peach.proto.melon.Melon.MelonHandshakeRequest
 import net.tjalp.peach.proto.melon.Melon.MelonHealthReport
 import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
 import org.slf4j.Logger
-import java.io.File
 import java.net.InetSocketAddress
 import java.nio.charset.StandardCharsets
-import java.util.*
 
 @Plugin(
     id = "melon",
@@ -47,8 +44,6 @@ class MelonServer {
     @Inject
     lateinit var logger: Logger
 
-    lateinit var melonConfig: JsonConfig<MelonConfig>; private set
-
     /**
      * The client RPC channel
      */
@@ -68,20 +63,20 @@ class MelonServer {
     /**
      * The current node identifier
      */
-    val nodeIdentifier: String = "m-${generateRandomString(6)}"
+    val nodeId: String
+        get() = config.nodeId
 
     /**
      * The melon config
      */
-    val config: MelonConfig
-        get() = melonConfig.data
+    lateinit var config: MelonConfig; private set
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-        melonConfig = JsonConfig(File("config.json"), MelonConfig::class.java)
+        config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), MelonConfig::class.java)
 
         rpcChannel = PeachRPC.createChannel(
-            nodeIdentifier,
+            nodeId,
             logger = logger,
             config = config.pumpkin
         ).build()
@@ -94,7 +89,7 @@ class MelonServer {
         healthReporter = MelonHealthReporter(this)
         redis = RedisManager(
             logger,
-            nodeIdentifier,
+            nodeId,
             redisDetails.server,
             redisDetails.port,
             redisDetails.password
@@ -102,6 +97,9 @@ class MelonServer {
 
         // Set the secret
         setVelocitySecret()
+
+        // Set the proxy's port
+        setVelocityPort()
 
         healthReporter.start()
 
@@ -150,7 +148,7 @@ class MelonServer {
      */
     internal suspend fun sendMelonHandshake() {
         val request = MelonHandshakeRequest.newBuilder()
-            .setNodeIdentifier(nodeIdentifier)
+            .setNodeIdentifier(nodeId)
 
         logger.info("Sending proxy handshake")
         val response = rpcStub.melonHandshake(request.build())
@@ -172,5 +170,15 @@ class MelonServer {
             field.isAccessible = true
             field.set(proxy.configuration, secret.toByteArray(StandardCharsets.UTF_8))
         }
+    }
+
+    /**
+     * Set the port this Velocity instance is listening to
+     */
+    private fun setVelocityPort() {
+        val clazz = Class.forName("com.velocitypowered.proxy.config.VelocityConfiguration")
+        val field = clazz.getDeclaredField("bind")
+        field.isAccessible = true
+        field.set(proxy.configuration, "0.0.0.0:${config.port}")
     }
 }

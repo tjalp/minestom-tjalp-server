@@ -4,10 +4,10 @@ import io.grpc.ManagedChannel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.tjalp.peach.apple.pit.config.AppleConfig
-import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.peel.util.GsonHelper
 import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
@@ -26,8 +26,6 @@ abstract class AppleServer {
      * use.
      */
     lateinit var logger: Logger
-
-    lateinit var appleConfig: JsonConfig<out AppleConfig>
 
     /**
      * The RPC management
@@ -51,20 +49,20 @@ abstract class AppleServer {
      * The apple config that should be used.
      * This is present in every platform
      */
-    val config: AppleConfig
-        get() = appleConfig.data
+    lateinit var config: AppleConfig
 
     /**
      * The current apple node's identifier
      */
-    val nodeIdentifier: String = "a-${generateRandomString(6)}"
+    val nodeId: String
+        get() = config.nodeId
 
     /**
      * Initialize the implementation. Must be called
      * before [AppleServer.start]
      */
     open fun init() {
-
+        config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), AppleConfig::class.java)
     }
 
     /**
@@ -79,7 +77,7 @@ abstract class AppleServer {
 
         // Initialize RPC
         rpcChannel = PeachRPC.createChannel(
-            nodeId = nodeIdentifier,
+            nodeId = nodeId,
             logger = logger,
             config = config.pumpkin
         ).build()
@@ -121,7 +119,7 @@ abstract class AppleServer {
      */
     internal suspend fun sendAppleHandshake() {
         val request = Apple.AppleHandshakeRequest.newBuilder()
-            .setNodeIdentifier(nodeIdentifier)
+            .setNodeIdentifier(nodeId)
             .setPort(config.port)
 
         logger.info("Sending apple handshake")
