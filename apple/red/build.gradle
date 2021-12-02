@@ -1,5 +1,26 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://papermc.io/repo/repository/maven-releases/"
+        }
+    }
+
+    dependencies {
+        classpath "io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.0"
+    }
+}
+
+apply plugin: 'io.papermc.paperweight.userdev'
+
 dependencies {
     api project(':apple:pit')
 
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.18-R0.1-SNAPSHOT") // For NMS development
     compileOnly "io.papermc.paper:paper-api:${project.lib_paper_version}"
+}
+
+tasks {
+    build {
+        dependsOn(reobfJar)
+    }
 }

@@ -62,7 +62,7 @@ class DockerNode(
         nodeId: String = "${type.shortName}-${generateRandomString(6)}",
         port: Int = availablePorts.random(),
         memory: Long = 512L,
-        maxCpuPercent: Long = 50
+        maxCpuPercent: Long? = null
     ) {
         if (port !in availablePorts) {
             throw IllegalArgumentException("Port $port is not available on this docker node (${this.config.dockerHost.host})")
@@ -74,11 +74,13 @@ class DockerNode(
         }
         val hostConfig = HostConfig.newHostConfig()
             .withMemory(memory * 1_000_000)
-            .withCpuPercent(maxCpuPercent)
             .withPortBindings(ports)
             .withAutoRemove(true)
             .withExtraHosts("host.docker.internal:host-gateway")
             .withNetworkMode("host") // TODO Not make this host
+
+        // Set cpu percentage if applicable
+        if (maxCpuPercent != null) hostConfig.withCpuPercent(maxCpuPercent)
 
         // Remove the port from the available ports of this docker node
         availablePorts.remove(port)
@@ -91,7 +93,7 @@ class DockerNode(
             .withName(nodeId)
             .withExposedPorts(exposedPort)
             .withHostConfig(hostConfig)
-            .withEnv("NODE_CONFIG=${GsonHelper.global().toJson(config)}")
+            .withEnv("NODE_CONFIG=${GsonHelper.global().toJson(config)}", "PORT=$port")
             .exec()
         client.startContainerCmd(nodeId).exec()
     }
