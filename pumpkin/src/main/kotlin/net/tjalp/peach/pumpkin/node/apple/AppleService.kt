@@ -9,6 +9,7 @@ import net.tjalp.peach.proto.apple.Apple.AppleHandshakeRequest
 import net.tjalp.peach.proto.apple.Apple.AppleHandshakeResponse
 import net.tjalp.peach.proto.apple.AppleServiceGrpc.AppleServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
+import net.tjalp.peach.pumpkin.node.Node
 import java.net.InetSocketAddress
 import java.util.*
 
@@ -25,6 +26,9 @@ class AppleService(
         val hostAddress = socket.address.hostAddress
         val appleNode = AppleServerNode(
             pumpkin,
+            pumpkin.dockerService.registeredNodes.first {
+                it.details.server == hostAddress
+            },
             request.nodeIdentifier,
             // We're running in a container, so 127.0.0.1 is redundant
             if (hostAddress.equals("127.0.0.1")) "127.0.0.1" else hostAddress,
@@ -73,6 +77,55 @@ class AppleService(
             response.onNext(res)
             response.onCompleted()
         }
+    }
+
+    override fun createNode(
+        request: Apple.CreateNodeRequest,
+        response: StreamObserver<Apple.CreateNodeResponse>
+    ) {
+        val type = Node.Type.values().firstOrNull {
+            it.name == request.nodeType.uppercase()
+        } ?: return
+        val dockerNode = pumpkin.dockerService.randomDockerNode()
+        val nodeId = request.nodeIdentifier
+
+        val node = try {
+            if (nodeId == "") {
+                dockerNode.createNode(type)
+            } else {
+                dockerNode.createNode(
+                    type = type,
+                    nodeId = nodeId
+                )
+            }
+        } catch (ex: Exception) {
+            pumpkin.logger.error("An error occured while trying to create node: ${ex.message}")
+            response.onNext(Apple.CreateNodeResponse.newBuilder()
+                .setNodeType(type.fullName)
+                .setNodeIdentifier(nodeId)
+                .setSuccess(false).build())
+            response.onCompleted()
+            return
+        }
+
+        response.onNext(Apple.CreateNodeResponse.newBuilder()
+            .setSuccess(true)
+            .setNodeIdentifier(node.nodeId)
+            .setNodeType(node.nodeType.fullName)
+            .build()
+        )
+        response.onCompleted()
+    }
+
+    override fun killNode(request: Apple.KillNodeRequest, response: StreamObserver<Empty>) {
+        val node = pumpkin.nodeService.nodes.firstOrNull {
+            it.nodeIdentifier == request.nodeIdentifier
+        }
+
+        node?.dockerNode?.killNode(node)
+
+        response.onNext(Empty.getDefaultInstance())
+        response.onCompleted()
     }
 
     /**

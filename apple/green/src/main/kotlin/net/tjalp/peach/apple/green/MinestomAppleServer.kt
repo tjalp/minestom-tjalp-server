@@ -4,10 +4,7 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.extras.bungee.BungeeCordProxy
 import net.minestom.server.extras.velocity.VelocityProxy
 import net.minestom.server.instance.Instance
-import net.tjalp.peach.apple.green.command.SkinCommand
-import net.tjalp.peach.apple.green.command.StopCommand
-import net.tjalp.peach.apple.green.command.SwitchCommand
-import net.tjalp.peach.apple.green.command.TeleportCommand
+import net.tjalp.peach.apple.green.command.*
 import net.tjalp.peach.apple.green.config.MinestomAppleConfig
 import net.tjalp.peach.apple.green.generator.SimpleGenerator
 import net.tjalp.peach.apple.green.listener.AppleEventListener
@@ -88,6 +85,7 @@ class MinestomAppleServer : AppleServer() {
         val man = MinecraftServer.getCommandManager()
 
         man.register(GamemodeCommand())
+        man.register(PeachCommand(this))
         man.register(SkinCommand())
         man.register(StopCommand())
         man.register(SwitchCommand())

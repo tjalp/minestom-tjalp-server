@@ -6,6 +6,9 @@ class DockerService(
     private val pumpkin: PumpkinServer
 ) {
 
+    val registeredNodes: Set<DockerNode>
+        get() = nodes
+
     private val nodes = HashSet<DockerNode>()
 
     /**

@@ -2,12 +2,14 @@ package net.tjalp.peach.pumpkin.node.melon
 
 import net.tjalp.peach.proto.melon.Melon
 import net.tjalp.peach.pumpkin.PumpkinServer
+import net.tjalp.peach.pumpkin.node.DockerNode
 import net.tjalp.peach.pumpkin.node.HealthMonitor
 import net.tjalp.peach.pumpkin.player.ConnectedPlayer
 import net.tjalp.peach.pumpkin.player.PeachPlayer
 
 class MelonServerNode(
     private val pumpkin: PumpkinServer,
+    override val dockerNode: DockerNode,
     override val nodeIdentifier: String
 ) : MelonNode {
 

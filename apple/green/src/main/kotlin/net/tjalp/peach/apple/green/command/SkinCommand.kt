@@ -6,11 +6,9 @@ import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.CommandContext
 import net.minestom.server.command.builder.arguments.ArgumentType
-import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.utils.entity.EntityFinder
-import java.util.function.Consumer
 
 class SkinCommand : Command("skin", "setskin") {
 
@@ -34,7 +32,7 @@ class SkinCommand : Command("skin", "setskin") {
     private fun executeUsername(sender: CommandSender, context: CommandContext) {
         val username = context.get<String>("username")
 
-        if (!sender.isPlayer) {
+        if (sender !is Player) {
             sender.sendMessage(Component.text("A player is required").color(NamedTextColor.RED))
             return
         }
@@ -66,11 +64,11 @@ class SkinCommand : Command("skin", "setskin") {
         val finder = context.get<EntityFinder>("targets")
 
         if (finder == null) {
-            if (!sender.isPlayer) {
+            if (sender !is Player) {
                 sender.sendMessage(Component.text("No targets were found").color(NamedTextColor.RED))
                 return
             }
-            (sender as Player).skin = PlayerSkin.fromUsername(sender.username)
+            sender.skin = PlayerSkin.fromUsername(sender.username)
             return
         }
 

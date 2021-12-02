@@ -7,6 +7,7 @@ import net.tjalp.peach.proto.melon.Melon.*
 import net.tjalp.peach.proto.melon.MelonServiceGrpc.MelonServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.player.ConnectedPlayer
+import java.net.InetSocketAddress
 import java.util.*
 
 class MelonService(
@@ -21,7 +22,15 @@ class MelonService(
         request: MelonHandshakeRequest,
         response: StreamObserver<MelonHandshakeResponse>
     ) {
-        val melonNode = MelonServerNode(pumpkin, request.nodeIdentifier)
+        val socket = currentInetSocketAddress()
+        val hostAddress = socket.address.hostAddress
+        val melonNode = MelonServerNode(
+            pumpkin,
+            pumpkin.dockerService.registeredNodes.first {
+                it.details.server == hostAddress
+            },
+            request.nodeIdentifier
+        )
 
         // Register the melon node
         pumpkin.nodeService.register(melonNode)
@@ -96,5 +105,15 @@ class MelonService(
      */
     private fun current() : MelonNode {
         return pumpkin.nodeService.getMelonNode(PeachRPC.NODE_ID_CTX.get())!!
+    }
+
+    /**
+     * Resolves the address the request was
+     * made from
+     *
+     * @return The [InetSocketAddress] of this request
+     */
+    private fun currentInetSocketAddress(): InetSocketAddress {
+        return PeachRPC.INET_SOCKET_CTX.get()
     }
 }

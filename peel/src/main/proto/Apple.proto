@@ -26,6 +26,21 @@ message PlayerSwitchResponse {
     bool success = 1;
 }
 
+message CreateNodeRequest {
+    string node_type = 1;
+    string node_identifier = 2;
+}
+
+message CreateNodeResponse {
+    bool success = 1;
+    string node_type = 2;
+    string node_identifier = 3;
+}
+
+message KillNodeRequest {
+    string node_identifier = 1;
+}
+
 service AppleService {
 
     rpc HealthStatus (stream AppleHealthReport) returns (google.protobuf.Empty);
@@ -33,4 +48,8 @@ service AppleService {
     rpc AppleHandshake (AppleHandshakeRequest) returns (AppleHandshakeResponse);
 
     rpc PlayerSwitch (PlayerSwitchRequest) returns (PlayerSwitchResponse);
+
+    rpc CreateNode (CreateNodeRequest) returns (CreateNodeResponse);
+
+    rpc KillNode (KillNodeRequest) returns (google.protobuf.Empty);
 }

@@ -13,11 +13,14 @@ import net.tjalp.peach.peel.config.DockerDetails
 import net.tjalp.peach.peel.config.NodeConfig
 import net.tjalp.peach.peel.util.GsonHelper
 import net.tjalp.peach.peel.util.generateRandomString
+import net.tjalp.peach.pumpkin.PumpkinServer
 import java.time.Duration
 
 class DockerNode(
-    private val details: DockerDetails
+    val details: DockerDetails
 ) {
+
+    private val pumpkin = PumpkinServer.get()
 
     /**
      * The [DockerClientConfig] that is used for this docker node
@@ -42,7 +45,10 @@ class DockerNode(
      */
     val client: DockerClient = DockerClientImpl.getInstance(config, httpClient)
 
-    val availablePorts = HashSet<Int>().apply {
+    /**
+     * The available ports on this docker node
+     */
+    private val availablePorts = HashSet<Int>().apply {
         repeat(1000) {
             add(it + 25000)
         }
@@ -63,7 +69,7 @@ class DockerNode(
         port: Int = availablePorts.random(),
         memory: Long = 512L,
         maxCpuPercent: Long? = null
-    ) {
+    ): UnregisteredNode {
         if (port !in availablePorts) {
             throw IllegalArgumentException("Port $port is not available on this docker node (${this.config.dockerHost.host})")
         }
@@ -89,13 +95,37 @@ class DockerNode(
         config.nodeId = nodeId
         config.port = port
 
-        client.createContainerCmd(type.imageName)
-            .withName(nodeId)
-            .withExposedPorts(exposedPort)
-            .withHostConfig(hostConfig)
-            .withEnv("NODE_CONFIG=${GsonHelper.global().toJson(config)}", "PORT=$port")
-            .exec()
-        client.startContainerCmd(nodeId).exec()
+        pumpkin.mainThread.asyncTask {
+            client.createContainerCmd(type.imageName)
+                .withName(nodeId)
+                .withExposedPorts(exposedPort)
+                .withHostConfig(hostConfig)
+                .withEnv("NODE_CONFIG=${GsonHelper.global().toJson(config)}", "PORT=$port")
+                .exec()
+            client.startContainerCmd(nodeId).exec()
+        }
+
+        return UnregisteredNode(nodeId, type)
+    }
+
+    /**
+     * Kill a [Node]
+     *
+     * @param nodeId The target node's identifier
+     */
+    fun killNode(nodeId: String) {
+        pumpkin.mainThread.asyncTask {
+            client.killContainerCmd(nodeId).exec()
+        }
+    }
+
+    /**
+     * See [killNode]
+     *
+     * @param [node] The target node
+     */
+    fun killNode(node: Node) {
+        killNode(node.nodeIdentifier)
     }
 
 }

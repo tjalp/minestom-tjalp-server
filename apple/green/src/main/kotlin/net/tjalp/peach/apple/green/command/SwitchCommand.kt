@@ -24,15 +24,13 @@ class SwitchCommand : Command("switch") {
     private fun execute(sender: CommandSender, context: CommandContext) {
         val nodeId = context.get<String>("node identifier")
 
-        if (!sender.isPlayer) {
+        if (sender !is Player) {
             sender.sendMessage(Component.text("A player is required").color(NamedTextColor.RED))
             return
         }
 
-        val player = sender as Player
+        AppleServer.get().switchPlayer(sender.uuid, nodeId)
 
-        AppleServer.get().switchPlayer(player.uuid, nodeId)
-
-        player.sendMessage("Switching to $nodeId...")
+        sender.sendMessage("Switching to $nodeId...")
     }
 }
