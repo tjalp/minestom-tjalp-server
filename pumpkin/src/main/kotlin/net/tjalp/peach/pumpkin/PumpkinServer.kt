@@ -100,7 +100,7 @@ class PumpkinServer {
                         port = 25565
                     )
                     "ag" -> dockerService.randomDockerNode().createNode(APPLE_GREEN)
-                    "ar" -> dockerService.randomDockerNode().createNode(APPLE_RED)
+                    "ar" -> dockerService.randomDockerNode().createNode(APPLE_RED, memory = 2048)
                 }
             }
         }

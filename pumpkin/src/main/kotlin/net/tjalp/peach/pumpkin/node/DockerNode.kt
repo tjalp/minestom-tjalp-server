@@ -67,7 +67,7 @@ class DockerNode(
         config: NodeConfig = NodeConfig(),
         nodeId: String = "${type.shortName}-${generateRandomString(6)}",
         port: Int = availablePorts.random(),
-        memory: Long = 512L,
+        memory: Long = if (type == Node.Type.APPLE_RED) 2048L else 512L, // TODO DEVELOPMENT THIS SHOULD BE BETTER
         maxCpuPercent: Long? = null
     ): UnregisteredNode {
         if (port !in availablePorts) {
@@ -80,6 +80,7 @@ class DockerNode(
         }
         val hostConfig = HostConfig.newHostConfig()
             .withMemory(memory * 1_000_000)
+            .withMemoryReservation(memory * 1_000_000)
             .withPortBindings(ports)
             .withAutoRemove(true)
             .withExtraHosts("host.docker.internal:host-gateway")
