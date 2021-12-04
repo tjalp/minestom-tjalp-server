@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
         server.start()
     }
 
-    Runtime.getRuntime().addShutdownHook(thread(true, name = "Shutdown Thread") {
+    Runtime.getRuntime().addShutdownHook(thread(false, name = "Shutdown Thread") {
         server.shutdown()
     })
 }
