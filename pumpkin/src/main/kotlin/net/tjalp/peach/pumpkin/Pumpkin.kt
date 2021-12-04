@@ -1,6 +1,7 @@
 package net.tjalp.peach.pumpkin
 
 import java.io.File
+import kotlin.concurrent.thread
 
 fun main(args: Array<String>) {
     val server = PumpkinServer()
@@ -9,4 +10,8 @@ fun main(args: Array<String>) {
         server.init(File("config.json"))
         server.start()
     }
+
+    Runtime.getRuntime().addShutdownHook(thread(true, name = "Shutdown Thread") {
+        server.shutdown()
+    })
 }
