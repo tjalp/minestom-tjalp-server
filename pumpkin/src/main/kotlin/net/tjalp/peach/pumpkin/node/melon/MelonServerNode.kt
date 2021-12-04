@@ -33,7 +33,12 @@ class MelonServerNode(
         healthMonitor.onConnectionDrop
             .publishOn(thread)
             .subscribe {
-                for (player in connectedPlayers) pumpkin.playerService.unregister(player)
+                val iterator = connectedPlayers.iterator()
+                while (iterator.hasNext()) {
+                    val player = iterator.next()
+                    iterator.remove()
+                    pumpkin.playerService.unregister(player)
+                }
 
                 pumpkin.nodeService.unregister(this)
             }

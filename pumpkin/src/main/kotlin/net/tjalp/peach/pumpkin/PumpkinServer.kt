@@ -78,9 +78,7 @@ class PumpkinServer {
         playerService.setup()
         dockerService.setup()
 
-        redis.transactionLegacy {
-            set("velocitySecret", generateRandomString(12)).subscribe()
-        }.subscribe()
+        redis.query().set("velocitySecret", generateRandomString(12)).subscribe()
 
         rpcService.start()
 
