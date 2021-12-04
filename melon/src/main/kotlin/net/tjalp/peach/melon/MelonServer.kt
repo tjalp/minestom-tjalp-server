@@ -15,6 +15,7 @@ import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
 import net.tjalp.peach.peel.util.GsonHelper
+import net.tjalp.peach.proto.melon.Melon
 import net.tjalp.peach.proto.melon.Melon.MelonHandshakeRequest
 import net.tjalp.peach.proto.melon.Melon.MelonHealthReport
 import net.tjalp.peach.proto.melon.MelonServiceGrpcKt.MelonServiceCoroutineStub
@@ -144,9 +145,22 @@ class MelonServer {
      * to register the current melon node
      */
     internal suspend fun sendMelonHandshake() {
+        val players = proxy.allPlayers
+            .filter { player ->
+                player.currentServer.isPresent
+            }
+            .map { player ->
+                Melon.LocalPlayer.newBuilder()
+                    .setUniqueId(player.uniqueId.toString())
+                    .setUsername(player.username)
+                    .setCurrentAppleNode(player.currentServer.get().serverInfo.name)
+                    .build()
+            }
+
         val request = MelonHandshakeRequest.newBuilder()
             .setNodeIdentifier(nodeId)
             .setPort(config.port)
+            .addAllPlayer(players)
 
         logger.info("Sending proxy handshake")
         val response = rpcStub.melonHandshake(request.build())

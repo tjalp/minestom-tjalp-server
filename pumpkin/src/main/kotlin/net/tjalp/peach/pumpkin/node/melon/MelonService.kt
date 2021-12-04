@@ -46,7 +46,6 @@ class MelonService(
         }
 
         val appleNodeRegistrations = pumpkin.nodeService.appleNodes
-            //.filter { it.isOnline }
             .map {
                 AppleNodeRegistration.newBuilder()
                     .setNodeId(it.nodeIdentifier)
