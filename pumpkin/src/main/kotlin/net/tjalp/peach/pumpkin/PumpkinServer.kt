@@ -108,6 +108,8 @@ class PumpkinServer {
      * Shut down the PumpkinServer
      */
     fun shutdown() {
+        if (!isRunning) return
+
         logger.info("Shutting down services")
 
         try {
