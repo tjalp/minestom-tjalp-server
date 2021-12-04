@@ -149,6 +149,7 @@ class MelonServer {
     internal suspend fun sendMelonHandshake() {
         val request = MelonHandshakeRequest.newBuilder()
             .setNodeIdentifier(nodeId)
+            .setPort(config.port)
 
         logger.info("Sending proxy handshake")
         val response = rpcStub.melonHandshake(request.build())

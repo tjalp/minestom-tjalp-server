@@ -48,7 +48,7 @@ class DockerNode(
     /**
      * The available ports on this docker node
      */
-    private val availablePorts = HashSet<Int>().apply {
+    internal val availablePorts = HashSet<Int>().apply {
         repeat(1000) {
             add(it + 25000)
         }
@@ -88,9 +88,6 @@ class DockerNode(
 
         // Set cpu percentage if applicable
         if (maxCpuPercent != null) hostConfig.withCpuPercent(maxCpuPercent)
-
-        // Remove the port from the available ports of this docker node
-        availablePorts.remove(port)
 
         // Set the config properties
         config.nodeId = nodeId

@@ -10,7 +10,8 @@ message MelonHealthReport {
 
 message MelonHandshakeRequest {
     string node_identifier = 1;
-    repeated LocalPlayer player = 2;
+    int32 port = 2;
+    repeated LocalPlayer player = 3;
 }
 
 message MelonHandshakeResponse {

@@ -10,4 +10,9 @@ interface MelonNode : PlayerNode {
      * The health monitor instance
      */
     val healthMonitor: HealthMonitor<MelonHealthReport>
+
+    /**
+     * The melon node's port
+     */
+    val port: Int
 }

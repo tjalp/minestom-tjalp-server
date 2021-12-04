@@ -10,7 +10,8 @@ import net.tjalp.peach.pumpkin.player.PeachPlayer
 class MelonServerNode(
     private val pumpkin: PumpkinServer,
     override val dockerNode: DockerNode,
-    override val nodeIdentifier: String
+    override val nodeIdentifier: String,
+    override val port: Int
 ) : MelonNode {
 
     override val healthMonitor: HealthMonitor<Melon.MelonHealthReport> = HealthMonitor(this)

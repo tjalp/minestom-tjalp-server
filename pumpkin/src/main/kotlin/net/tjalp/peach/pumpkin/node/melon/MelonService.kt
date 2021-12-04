@@ -29,7 +29,8 @@ class MelonService(
             pumpkin.dockerService.registeredNodes.first {
                 it.details.server == hostAddress
             },
-            request.nodeIdentifier
+            request.nodeIdentifier,
+            request.port
         )
 
         // Register the melon node
