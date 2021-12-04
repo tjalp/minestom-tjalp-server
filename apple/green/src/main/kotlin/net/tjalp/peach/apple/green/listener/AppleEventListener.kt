@@ -37,7 +37,6 @@ class AppleEventListener(
 
         MinecraftServer.getGlobalEventHandler().addChild(node)
 
-        node.addListener(ServerListPingEvent::class.java, this::onServerListPing)
         node.addListener(PlayerLoginEvent::class.java, this::onPlayerLogin)
         node.addListener(PlayerBlockBreakEvent::class.java, this::onPlayerBlockBreak)
         node.addListener(ItemDropEvent::class.java, this::onItemDrop)

@@ -7,8 +7,6 @@ import net.minestom.server.instance.ChunkGenerator
 import net.minestom.server.instance.ChunkPopulator
 import net.minestom.server.instance.batch.ChunkBatch
 import net.minestom.server.instance.block.Block
-import net.minestom.server.world.biomes.Biome
-import net.tjalp.peach.apple.green.registry.PLAINS
 import java.util.*
 
 class SimpleGenerator : ChunkGenerator {
@@ -46,10 +44,6 @@ class SimpleGenerator : ChunkGenerator {
                 }
             }
         }
-    }
-
-    override fun fillBiomes(biomes: Array<out Biome>, chunkX: Int, chunkZ: Int) {
-        Arrays.fill(biomes, PLAINS)
     }
 
     override fun getPopulators(): List<ChunkPopulator?> {
