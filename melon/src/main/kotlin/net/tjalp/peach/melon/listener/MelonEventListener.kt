@@ -3,6 +3,7 @@ package net.tjalp.peach.melon.listener
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
+import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,6 +46,17 @@ class MelonEventListener(
             val response = melon.rpcStub.playerHandshake(request)
 
             initialAppleNodeCache[event.player.uniqueId] = response.targetNodeIdentifier
+        }
+    }
+
+    @Subscribe
+    private fun onKickedFromServer(event: KickedFromServerEvent) {
+        if (!event.kickedDuringServerConnect()) {
+            event.result = KickedFromServerEvent.RedirectPlayer.create(
+                melon.proxy.allServers.filter {
+                    it.serverInfo.name != event.server.serverInfo.name
+                }.randomOrNull()
+            )
         }
     }
 
