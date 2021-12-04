@@ -2,6 +2,7 @@ package net.tjalp.peach.pumpkin.node
 
 import net.tjalp.peach.peel.APPLE_NODE_REGISTER
 import net.tjalp.peach.peel.APPLE_NODE_UNREGISTER
+import net.tjalp.peach.peel.REQUEST_PUMPKIN_CONNECT
 import net.tjalp.peach.peel.signal.AppleNodeRegisterSignal
 import net.tjalp.peach.peel.signal.AppleNodeUnregisterSignal
 import net.tjalp.peach.pumpkin.PumpkinMainThread
@@ -11,6 +12,7 @@ import net.tjalp.peach.pumpkin.node.apple.AppleService
 import net.tjalp.peach.pumpkin.node.melon.MelonNode
 import net.tjalp.peach.pumpkin.node.melon.MelonService
 import net.tjalp.peach.pumpkin.player.ConnectedPlayer
+import java.time.Duration
 
 class NodeService(
     private val pumpkin: PumpkinServer
@@ -48,9 +50,16 @@ class NodeService(
     fun setup() {
         pumpkin.logger.info("Setting up node registry")
 
+        val heartbeatInterval = Duration.ofSeconds(5)
+
         pumpkin.rpcService.configure {
             it.addService(AppleService(pumpkin))
             it.addService(MelonService(pumpkin))
+        }
+
+        // Send connection heartbeat
+        pumpkin.mainThread.scheduleTask(heartbeatInterval, heartbeatInterval) {
+            pumpkin.redis.publish(REQUEST_PUMPKIN_CONNECT).subscribe()
         }
     }
 

@@ -4,6 +4,7 @@ import io.grpc.ManagedChannel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.tjalp.peach.apple.pit.config.AppleConfig
+import net.tjalp.peach.apple.pit.listener.AppleSignalListener
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
@@ -97,7 +98,9 @@ abstract class AppleServer {
         )
 
         healthReporter.start()
-        healthReporter.connect() // TODO Connect on redis signal from pumpkin
+
+        // Register listeners
+        AppleSignalListener(this)
     }
 
     /**

@@ -103,9 +103,6 @@ class MelonServer {
 
         healthReporter.start()
 
-        // TODO Connect when a redis signal from pumpkin is received
-        healthReporter.connect()
-
         // Register listeners
         MelonEventListener(this)
         MelonSignalListener(this)

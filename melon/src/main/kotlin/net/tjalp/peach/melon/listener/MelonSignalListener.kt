@@ -4,9 +4,11 @@ import net.tjalp.peach.melon.MelonServer
 import net.tjalp.peach.peel.APPLE_NODE_REGISTER
 import net.tjalp.peach.peel.APPLE_NODE_UNREGISTER
 import net.tjalp.peach.peel.PLAYER_SWITCH
+import net.tjalp.peach.peel.REQUEST_PUMPKIN_CONNECT
 import net.tjalp.peach.peel.database.RedisManager.SignalMessage
 import net.tjalp.peach.peel.signal.AppleNodeRegisterSignal
 import net.tjalp.peach.peel.signal.AppleNodeUnregisterSignal
+import net.tjalp.peach.peel.signal.EmptySignal
 import net.tjalp.peach.peel.signal.PlayerSwitchSignal
 
 class MelonSignalListener(
@@ -16,9 +18,14 @@ class MelonSignalListener(
     init {
         val redis = melon.redis
 
+        redis.subscribe(REQUEST_PUMPKIN_CONNECT).subscribe(this::requestPumpkinConnect)
         redis.subscribe(APPLE_NODE_REGISTER).subscribe(this::appleNodeRegister)
         redis.subscribe(APPLE_NODE_UNREGISTER).subscribe(this::appleNodeUnregister)
         redis.subscribe(PLAYER_SWITCH).subscribe(this::onPlayerSwitch)
+    }
+
+    private fun requestPumpkinConnect(signal: SignalMessage<EmptySignal>) {
+        melon.healthReporter.connect()
     }
 
     private fun appleNodeRegister(signal: SignalMessage<AppleNodeRegisterSignal>) {

@@ -3,7 +3,13 @@ package net.tjalp.peach.peel
 import net.tjalp.peach.peel.database.RedisManager.SignalKey
 import net.tjalp.peach.peel.signal.AppleNodeRegisterSignal
 import net.tjalp.peach.peel.signal.AppleNodeUnregisterSignal
+import net.tjalp.peach.peel.signal.EmptySignal
 import net.tjalp.peach.peel.signal.PlayerSwitchSignal
+
+/**
+ * Request a connection to Pumpkin
+ */
+val REQUEST_PUMPKIN_CONNECT = SignalKey("peach.request_pumpkin_connect", EmptySignal::class)
 
 /**
  * An apple node has been registered
