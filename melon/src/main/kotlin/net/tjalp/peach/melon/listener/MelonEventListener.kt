@@ -52,11 +52,17 @@ class MelonEventListener(
     @Subscribe
     private fun onKickedFromServer(event: KickedFromServerEvent) {
         if (!event.kickedDuringServerConnect()) {
-            event.result = KickedFromServerEvent.RedirectPlayer.create(
-                melon.proxy.allServers.filter {
-                    it.serverInfo.name != event.server.serverInfo.name
-                }.randomOrNull()
-            )
+            val server = if (event.server == null) {
+                melon.proxy.allServers.randomOrNull()
+            } else {
+                melon.proxy.allServers
+                    .filter {
+                        it.serverInfo.name != event.server.serverInfo.name
+                    }
+                    .randomOrNull()
+            }
+
+            event.result = KickedFromServerEvent.RedirectPlayer.create(server)
         }
     }
 
