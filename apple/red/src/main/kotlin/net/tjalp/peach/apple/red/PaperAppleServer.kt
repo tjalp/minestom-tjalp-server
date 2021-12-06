@@ -2,6 +2,7 @@ package net.tjalp.peach.apple.red
 
 import com.destroystokyo.paper.PaperConfig
 import net.tjalp.peach.apple.pit.AppleServer
+import net.tjalp.peach.apple.red.command.PeachCommand
 import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
 import net.tjalp.peach.peel.util.GsonHelper
@@ -27,7 +28,11 @@ class PaperAppleServer : AppleServer() {
         // Set the secret
         setVelocitySecret()
 
+        // Register listeners
         AppleEventListener(this)
+
+        // Initialize services
+        registerCommands()
     }
 
     /**
@@ -40,24 +45,31 @@ class PaperAppleServer : AppleServer() {
     }
 
     /**
+     * Register all commands
+     */
+    private fun registerCommands() {
+        PeachCommand(this)
+    }
+
+    /**
      * The plugin that manages the initialization,
      * start and shutdown of an [AppleServer].
      */
     class Plugin : JavaPlugin() {
 
-        lateinit var server: PaperAppleServer
+        private lateinit var appleServer: PaperAppleServer
 
         override fun onEnable() {
-            server = PaperAppleServer()
+            appleServer = PaperAppleServer()
 
             // Initialize the Paper server
-            server.plugin = this
-            server.init()
-            server.start()
+            appleServer.plugin = this
+            appleServer.init()
+            appleServer.start()
         }
 
         override fun onDisable() {
-            server.shutdown()
+            appleServer.shutdown()
         }
     }
 }

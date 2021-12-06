@@ -67,7 +67,7 @@ abstract class AppleServer {
      * before [AppleServer.start]
      */
     open fun init() {
-        this.initialized = false;
+        this.initialized = true;
     }
 
     /**
