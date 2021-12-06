@@ -37,6 +37,10 @@ message CreateNodeResponse {
     string node_identifier = 3;
 }
 
+message StopNodeRequest {
+    string node_identifier = 1;
+}
+
 message KillNodeRequest {
     string node_identifier = 1;
 }
@@ -50,6 +54,8 @@ service AppleService {
     rpc PlayerSwitch (PlayerSwitchRequest) returns (PlayerSwitchResponse);
 
     rpc CreateNode (CreateNodeRequest) returns (CreateNodeResponse);
+
+    rpc StopNode (StopNodeRequest) returns (google.protobuf.Empty);
 
     rpc KillNode (KillNodeRequest) returns (google.protobuf.Empty);
 }

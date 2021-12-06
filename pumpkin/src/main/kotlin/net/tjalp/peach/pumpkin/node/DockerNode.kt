@@ -107,6 +107,28 @@ class DockerNode(
     }
 
     /**
+     * Stop a [Node]
+     *
+     * @param nodeId The target node's identifier
+     */
+    fun stopNode(nodeId: String) {
+        pumpkin.mainThread.asyncTask {
+            client.stopContainerCmd(nodeId)
+                .withTimeout(15)
+                .exec()
+        }
+    }
+
+    /**
+     * See [stopNode]
+     *
+     * @param node The target node
+     */
+    fun stopNode(node: Node) {
+        stopNode(node.nodeIdentifier)
+    }
+
+    /**
      * Kill a [Node]
      *
      * @param nodeId The target node's identifier
@@ -120,7 +142,7 @@ class DockerNode(
     /**
      * See [killNode]
      *
-     * @param [node] The target node
+     * @param node The target node
      */
     fun killNode(node: Node) {
         killNode(node.nodeIdentifier)

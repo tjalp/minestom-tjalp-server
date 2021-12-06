@@ -8,8 +8,6 @@ import net.tjalp.peach.apple.pit.listener.AppleSignalListener
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
-import net.tjalp.peach.peel.util.GsonHelper
-import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
 import org.slf4j.Logger
@@ -53,6 +51,12 @@ abstract class AppleServer {
     lateinit var config: AppleConfig
 
     /**
+     * Whether the [AppleServer] has been
+     * initialized.
+     */
+    private var initialized = false
+
+    /**
      * The current apple node's identifier
      */
     val nodeId: String
@@ -63,7 +67,7 @@ abstract class AppleServer {
      * before [AppleServer.start]
      */
     open fun init() {
-
+        this.initialized = false;
     }
 
     /**
@@ -74,6 +78,10 @@ abstract class AppleServer {
      * this
      */
     open fun start() {
+        if (!initialized) {
+            throw IllegalStateException("AppleServer#init must be called before AppleServer#start")
+        }
+
         instance = this
 
         // Initialize RPC

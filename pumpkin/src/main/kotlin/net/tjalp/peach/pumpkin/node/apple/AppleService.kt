@@ -117,6 +117,17 @@ class AppleService(
         response.onCompleted()
     }
 
+    override fun stopNode(request: Apple.StopNodeRequest, response: StreamObserver<Empty>) {
+        val node = pumpkin.nodeService.nodes.firstOrNull {
+            it.nodeIdentifier == request.nodeIdentifier
+        }
+
+        node?.dockerNode?.stopNode(node)
+
+        response.onNext(Empty.getDefaultInstance())
+        response.onCompleted()
+    }
+
     override fun killNode(request: Apple.KillNodeRequest, response: StreamObserver<Empty>) {
         val node = pumpkin.nodeService.nodes.firstOrNull {
             it.nodeIdentifier == request.nodeIdentifier
