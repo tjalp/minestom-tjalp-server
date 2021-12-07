@@ -1,6 +1,5 @@
 package net.tjalp.peach.apple.green.command
 
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -41,7 +40,7 @@ class PeachCommand(
 
         sender.sendMessage(Component.text("Creating node...").color(NamedTextColor.YELLOW))
 
-        GlobalScope.launch {
+        apple.scheduler.launch {
             val request = Apple.CreateNodeRequest.newBuilder()
                 .setNodeType(nodeType)
 
@@ -75,7 +74,7 @@ class PeachCommand(
                 .append(Component.text(nodeId).color(NamedTextColor.GOLD))
         )
 
-        GlobalScope.launch {
+        apple.scheduler.launch {
             val request = Apple.StopNodeRequest.newBuilder()
                 .setNodeIdentifier(nodeId)
                 .build()
@@ -95,7 +94,7 @@ class PeachCommand(
                 .append(Component.text(nodeId).color(NamedTextColor.GOLD))
         )
 
-        GlobalScope.launch {
+        apple.scheduler.launch {
             val request = Apple.KillNodeRequest.newBuilder()
                 .setNodeIdentifier(nodeId)
                 .build()

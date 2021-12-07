@@ -2,9 +2,12 @@ package net.tjalp.peach.apple.pit
 
 import io.grpc.ManagedChannel
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.tjalp.peach.apple.pit.config.AppleConfig
 import net.tjalp.peach.apple.pit.listener.AppleSignalListener
+import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
@@ -51,6 +54,11 @@ abstract class AppleServer {
     lateinit var config: AppleConfig
 
     /**
+     * The global scheduler
+     */
+    abstract val scheduler: AppleScheduler<out ReactiveScheduler>
+
+    /**
      * Whether the [AppleServer] has been
      * initialized.
      */
@@ -67,7 +75,7 @@ abstract class AppleServer {
      * before [AppleServer.start]
      */
     open fun init() {
-        this.initialized = true;
+        this.initialized = true
     }
 
     /**
@@ -122,6 +130,7 @@ abstract class AppleServer {
 
         healthReporter.stop()
         redis.dispose()
+        scheduler.cancel()
     }
 
     /**
