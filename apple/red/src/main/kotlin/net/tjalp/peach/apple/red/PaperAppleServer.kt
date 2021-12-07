@@ -2,6 +2,8 @@ package net.tjalp.peach.apple.red
 
 import com.destroystokyo.paper.PaperConfig
 import net.tjalp.peach.apple.pit.AppleServer
+import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.apple.red.command.PeachCommand
 import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
@@ -12,6 +14,9 @@ import java.nio.charset.StandardCharsets
 class PaperAppleServer : AppleServer() {
 
     lateinit var plugin: Plugin
+
+    override val scheduler: AppleScheduler<out ReactiveScheduler>
+        get() = TODO("Not yet implemented")
 
     override fun init() {
         super.init()
