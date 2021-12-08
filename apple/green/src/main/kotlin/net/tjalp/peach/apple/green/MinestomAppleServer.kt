@@ -36,7 +36,7 @@ class MinestomAppleServer : AppleServer() {
     /** The main instance which is loaded at all times */
     lateinit var overworld: Instance
 
-    override val scheduler: AppleScheduler<out ReactiveScheduler>
+    override val scheduler: AppleScheduler
         get() = globalScheduler
 
     override fun init() {

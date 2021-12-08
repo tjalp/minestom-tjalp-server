@@ -7,16 +7,18 @@ import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.apple.red.command.PeachCommand
 import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
+import net.tjalp.peach.apple.red.scheduler.PaperAppleScheduler
 import net.tjalp.peach.peel.util.GsonHelper
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.charset.StandardCharsets
 
 class PaperAppleServer : AppleServer() {
 
+    private lateinit var globalScheduler: PaperAppleScheduler
     lateinit var plugin: Plugin
 
-    override val scheduler: AppleScheduler<out ReactiveScheduler>
-        get() = TODO("Not yet implemented")
+    override val scheduler: AppleScheduler
+        get() = globalScheduler
 
     override fun init() {
         super.init()
@@ -25,6 +27,9 @@ class PaperAppleServer : AppleServer() {
         config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), PaperAppleConfig::class.java)
 
         logger = plugin.slF4JLogger
+
+        // Initialize the scheduler
+        globalScheduler = PaperAppleScheduler(this)
     }
 
     override fun start() {
