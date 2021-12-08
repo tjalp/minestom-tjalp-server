@@ -27,13 +27,13 @@ class PaperAppleServer : AppleServer() {
         config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), PaperAppleConfig::class.java)
 
         logger = plugin.slF4JLogger
-
-        // Initialize the scheduler
-        globalScheduler = PaperAppleScheduler(this)
     }
 
     override fun start() {
         super.start()
+
+        // Initialize the scheduler
+        globalScheduler = PaperAppleScheduler(this)
 
         // Set the secret
         setVelocitySecret()
