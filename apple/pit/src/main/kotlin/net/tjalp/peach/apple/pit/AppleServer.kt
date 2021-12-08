@@ -14,6 +14,7 @@ import net.tjalp.peach.peel.network.PeachRPC
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
 import org.slf4j.Logger
+import reactor.core.scheduler.Schedulers
 import java.util.*
 
 /**
@@ -131,6 +132,8 @@ abstract class AppleServer {
         healthReporter.stop()
         redis.dispose()
         scheduler.cancel()
+        rpcChannel.shutdownNow()
+        Schedulers.shutdownNow()
     }
 
     /**

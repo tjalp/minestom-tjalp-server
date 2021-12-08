@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import reactor.core.Disposable
 import reactor.core.Disposables
 import reactor.core.scheduler.Scheduler
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit
 abstract class AppleScheduler<T : ReactiveScheduler> : Executor, CoroutineScope, Scheduler, Disposable {
 
     var disposed = false
+    var lastCleanTime = 0L
     val taskList: MutableList<SchedulerTask> = Collections.synchronizedList(ArrayList())
     private val composite = Disposables.composite()
 
@@ -36,27 +38,27 @@ abstract class AppleScheduler<T : ReactiveScheduler> : Executor, CoroutineScope,
      * Delay a task and execute it after the given amount
      * of ticks have passed.
      *
-     * @param ticks The ticks to delay for
+     * @param delay The delay before running the callback
      * @param cancel if the callback should be run when the source is disposed
      * @param cb The callback to execute
      * @return Task instance
      */
-    abstract fun delayTask(ticks: Long, cancel: Boolean = false, cb: suspend (SchedulerTask) -> Unit): SchedulerTask
+    abstract fun delayTask(delay: Duration, cancel: Boolean = false, cb: suspend (SchedulerTask) -> Unit): SchedulerTask
 
     /**
      * Delay a task and execute it after the given amount
      * of ticks have passed. The task will be re-executed
      * periodically after the amount of ticks have passed.
      *
-     * @param delay The ticks to delay for
-     * @param ticks The ticks until repeated
+     * @param delay The delay before running the callback
+     * @param repeat The duration between repetition
      * @param onCancel Optional cancel callback
      * @param cb The callback to execute
      * @return Task instance
      */
     abstract fun repeatTask(
-        delay: Long,
-        ticks: Long,
+        delay: Duration,
+        repeat: Duration,
         onCancel: (suspend (SchedulerTask) -> Unit)? = null,
         cb: suspend (SchedulerTask) -> Unit
     ): SchedulerTask

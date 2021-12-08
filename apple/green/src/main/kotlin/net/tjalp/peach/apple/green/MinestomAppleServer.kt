@@ -1,7 +1,7 @@
 package net.tjalp.peach.apple.green
 
 import net.minestom.server.MinecraftServer
-import net.minestom.server.extras.bungee.BungeeCordProxy
+import net.minestom.server.extras.MojangAuth
 import net.minestom.server.extras.velocity.VelocityProxy
 import net.minestom.server.instance.Instance
 import net.tjalp.peach.apple.green.command.*
@@ -13,7 +13,6 @@ import net.tjalp.peach.apple.green.registry.OVERWORLD
 import net.tjalp.peach.apple.green.registry.registerBiomes
 import net.tjalp.peach.apple.green.registry.registerDimensions
 import net.tjalp.peach.apple.green.scheduler.MinestomAppleScheduler
-import net.tjalp.peach.apple.green.scheduler.MinestomReactiveScheduler
 import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
 import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
@@ -84,7 +83,7 @@ class MinestomAppleServer : AppleServer() {
 
         // Enable the proxy (must be done after redis has connected)
         val velocitySecret = redis.query().get("velocitySecret").block()
-        if (velocitySecret != null) VelocityProxy.enable(velocitySecret) else BungeeCordProxy.enable()
+        if (velocitySecret != null) VelocityProxy.enable(velocitySecret) else MojangAuth.init()
 
         // Start the server
         server.start("0.0.0.0", config.port)

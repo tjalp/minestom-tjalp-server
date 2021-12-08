@@ -8,6 +8,7 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.timer.Task
 import net.minestom.server.timer.TaskStatus
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 
 class MinestomAppleScheduler : AppleScheduler<MinestomReactiveScheduler>() {
@@ -19,7 +20,7 @@ class MinestomAppleScheduler : AppleScheduler<MinestomReactiveScheduler>() {
 
     override fun runTask(cancel: Boolean, cb: suspend (SchedulerTask) -> Unit): SchedulerTask {
         if (disposed) {
-            throw IllegalStateException("Attempted runTask on disposed schedule source")
+            throw IllegalStateException("Attempted runTask on disposed scheduler")
         }
 
         val task = if (cancel) {
@@ -45,21 +46,77 @@ class MinestomAppleScheduler : AppleScheduler<MinestomReactiveScheduler>() {
         return task
     }
 
-    override fun delayTask(ticks: Long, cancel: Boolean, cb: suspend (SchedulerTask) -> Unit): SchedulerTask {
-        TODO("Not yet implemented")
+    override fun delayTask(delay: Duration, cancel: Boolean, cb: suspend (SchedulerTask) -> Unit): SchedulerTask {
+        if (disposed) {
+            throw IllegalStateException("Attempted delayTask on disposed scheduler")
+        }
+
+        val task = if (cancel) {
+            MinestomCancelableTask(cb)
+        } else {
+            MinestomSchedulerTask()
+        } as MinestomSchedulerTask
+
+        val sched = scheduler.buildTask {
+            launch(Dispatchers.Unconfined) {
+                try {
+                    cb(task)
+                } catch (err: Exception) {
+                    err.printStackTrace()
+                }
+            }
+        }.delay(delay).schedule()
+
+        purgeExpiredTasks(false)
+        task.ref = sched
+        taskList.add(task)
+
+        return task
     }
 
     override fun repeatTask(
-        delay: Long,
-        ticks: Long,
+        delay: Duration,
+        repeat: Duration,
         onCancel: (suspend (SchedulerTask) -> Unit)?,
         cb: suspend (SchedulerTask) -> Unit
     ): SchedulerTask {
-        TODO("Not yet implemented")
+        if (disposed) {
+            throw IllegalStateException("Attempted repeatTask on disposed scheduler")
+        }
+
+        val task = if (onCancel != null) {
+            MinestomCancelableTask(cb)
+        } else {
+            MinestomSchedulerTask()
+        } as MinestomSchedulerTask
+
+        val sched = scheduler.buildTask {
+            launch(Dispatchers.Unconfined) {
+                try {
+                    cb(task)
+                } catch (err: Exception) {
+                    err.printStackTrace()
+                }
+            }
+        }.delay(delay).repeat(repeat).schedule()
+
+        purgeExpiredTasks(false)
+        task.ref = sched
+        taskList.add(task)
+
+        return task
     }
 
     override fun purgeExpiredTasks(force: Boolean) {
-        TODO("Not yet implemented")
+        if (!force && System.currentTimeMillis() - lastCleanTime < 1000) {
+            return
+        }
+
+        taskList.removeIf {
+            (it as MinestomSchedulerTask).ref.status != TaskStatus.SCHEDULED
+        }
+
+        lastCleanTime = System.currentTimeMillis()
     }
 
     class MinestomCancelableTask(
