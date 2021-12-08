@@ -2,6 +2,8 @@ package net.tjalp.peach.apple.green.command
 
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
@@ -53,7 +55,10 @@ class PeachCommand(
                     Component.text("Succesfully created node with type ").color(NamedTextColor.GREEN)
                         .append(Component.text(response.nodeType).color(NamedTextColor.DARK_GREEN))
                         .append(Component.text(" and identifier "))
-                        .append(Component.text(response.nodeIdentifier).color(NamedTextColor.DARK_GREEN))
+                        .append(Component.text(response.nodeIdentifier)
+                            .color(NamedTextColor.DARK_GREEN)
+                            .hoverEvent(HoverEvent.showText(Component.text("Click to copy!").color(NamedTextColor.GREEN)))
+                            .clickEvent(ClickEvent.copyToClipboard(response.nodeIdentifier)))
                 )
             } else {
                 sender.sendMessage(
