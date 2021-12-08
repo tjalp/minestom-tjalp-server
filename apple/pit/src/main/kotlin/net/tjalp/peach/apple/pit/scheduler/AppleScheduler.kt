@@ -12,7 +12,7 @@ import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
-abstract class AppleScheduler<T : ReactiveScheduler> : Executor, CoroutineScope, Scheduler, Disposable {
+abstract class AppleScheduler : Executor, CoroutineScope, Scheduler, Disposable {
 
     var disposed = false
     var lastCleanTime = 0L
@@ -91,7 +91,7 @@ abstract class AppleScheduler<T : ReactiveScheduler> : Executor, CoroutineScope,
 
     // ----- Scheduler delegators -----
 
-    abstract val reactive: T
+    abstract val reactive: ReactiveScheduler
 
     override fun schedule(task: Runnable, delay: Long, unit: TimeUnit): Disposable {
         return reactive.schedule(task, delay, unit)

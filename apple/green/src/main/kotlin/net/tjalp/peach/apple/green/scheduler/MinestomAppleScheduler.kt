@@ -8,15 +8,16 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.timer.Task
 import net.minestom.server.timer.TaskStatus
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 
-class MinestomAppleScheduler : AppleScheduler<MinestomReactiveScheduler>() {
+class MinestomAppleScheduler : AppleScheduler() {
 
     private val scheduler = MinecraftServer.getSchedulerManager()
 
     override val coroutineContext: CoroutineContext = MinestomDispatcher + SupervisorJob()
-    override val reactive: MinestomReactiveScheduler = MinestomReactiveScheduler()
+    override val reactive = ReactiveScheduler(this)
 
     override fun runTask(cancel: Boolean, cb: suspend (SchedulerTask) -> Unit): SchedulerTask {
         if (disposed) {

@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.apple.red.PaperAppleServer
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitTask
@@ -14,12 +15,12 @@ import kotlin.math.roundToLong
 
 class PaperAppleScheduler(
     private val apple: PaperAppleServer
-) : AppleScheduler<PaperReactiveScheduler>() {
+) : AppleScheduler() {
 
     private val scheduler = Bukkit.getScheduler()
 
     override val coroutineContext: CoroutineContext = PaperDispatcher + SupervisorJob()
-    override val reactive: PaperReactiveScheduler = PaperReactiveScheduler()
+    override val reactive = ReactiveScheduler(this)
 
     override fun runTask(cancel: Boolean, cb: suspend (SchedulerTask) -> Unit): SchedulerTask {
         if (disposed) {
