@@ -2,16 +2,23 @@ package net.tjalp.peach.apple.red
 
 import com.destroystokyo.paper.PaperConfig
 import net.tjalp.peach.apple.pit.AppleServer
+import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.apple.red.command.PeachCommand
 import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
+import net.tjalp.peach.apple.red.scheduler.PaperAppleScheduler
 import net.tjalp.peach.peel.util.GsonHelper
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.charset.StandardCharsets
 
 class PaperAppleServer : AppleServer() {
 
+    private lateinit var globalScheduler: PaperAppleScheduler
     lateinit var plugin: Plugin
+
+    override val scheduler: AppleScheduler
+        get() = globalScheduler
 
     override fun init() {
         super.init()
@@ -24,6 +31,9 @@ class PaperAppleServer : AppleServer() {
 
     override fun start() {
         super.start()
+
+        // Initialize the scheduler
+        globalScheduler = PaperAppleScheduler(this)
 
         // Set the secret
         setVelocitySecret()

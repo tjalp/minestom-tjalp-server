@@ -1,7 +1,7 @@
 package net.tjalp.peach.apple.green
 
 import net.minestom.server.MinecraftServer
-import net.minestom.server.extras.bungee.BungeeCordProxy
+import net.minestom.server.extras.MojangAuth
 import net.minestom.server.extras.velocity.VelocityProxy
 import net.minestom.server.instance.Instance
 import net.tjalp.peach.apple.green.command.*
@@ -12,7 +12,10 @@ import net.tjalp.peach.apple.green.old.command.GamemodeCommand
 import net.tjalp.peach.apple.green.registry.OVERWORLD
 import net.tjalp.peach.apple.green.registry.registerBiomes
 import net.tjalp.peach.apple.green.registry.registerDimensions
+import net.tjalp.peach.apple.green.scheduler.MinestomAppleScheduler
 import net.tjalp.peach.apple.pit.AppleServer
+import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.peel.util.GsonHelper
 
 fun main(args: Array<String>) {
@@ -25,11 +28,16 @@ fun main(args: Array<String>) {
 
 class MinestomAppleServer : AppleServer() {
 
+    private lateinit var globalScheduler: MinestomAppleScheduler
+
     /** The [MinecraftServer] that will be used */
     lateinit var server: MinecraftServer
 
     /** The main instance which is loaded at all times */
     lateinit var overworld: Instance
+
+    override val scheduler: AppleScheduler
+        get() = globalScheduler
 
     override fun init() {
         super.init()
@@ -43,6 +51,9 @@ class MinestomAppleServer : AppleServer() {
 
         // Set the logger
         logger = MinecraftServer.LOGGER
+
+        // Initialize the scheduler
+        globalScheduler = MinestomAppleScheduler()
 
         // Set some Minestom properties
         // System.setProperty("minestom.chunk-view-distance", "8")
@@ -72,7 +83,7 @@ class MinestomAppleServer : AppleServer() {
 
         // Enable the proxy (must be done after redis has connected)
         val velocitySecret = redis.query().get("velocitySecret").block()
-        if (velocitySecret != null) VelocityProxy.enable(velocitySecret) else BungeeCordProxy.enable()
+        if (velocitySecret != null) VelocityProxy.enable(velocitySecret) else MojangAuth.init()
 
         // Start the server
         server.start("0.0.0.0", config.port)
