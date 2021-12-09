@@ -104,6 +104,10 @@ class MelonServer {
 
         healthReporter.start()
 
+        healthReporter.onConnectionOpen.subscribe {
+            setVelocitySecret()
+        }
+
         // Register listeners
         MelonEventListener(this)
         MelonSignalListener(this)

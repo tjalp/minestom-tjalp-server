@@ -156,7 +156,7 @@ abstract class AppleServer {
      * @param nodeId The target node's unique identifier
      */
     fun switchPlayer(uniqueId: UUID, nodeId: String) {
-        GlobalScope.launch {
+        scheduler.launch {
             val request = Apple.PlayerSwitchRequest.newBuilder()
                 .setPlayerUniqueIdentifier(uniqueId.toString())
                 .setAppleNodeIdentifier(nodeId)

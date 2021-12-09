@@ -8,21 +8,22 @@ import net.minestom.server.command.builder.CommandContext
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.entity.Player
 import net.tjalp.peach.apple.pit.AppleServer
+import net.tjalp.peach.apple.pit.command.NODE_ID
 
 class SwitchCommand : Command("switch") {
 
     init {
         setDefaultExecutor { sender, context ->
-            sender.sendMessage(Component.text("Usage: /${context.commandName} <node identifier>").color(NamedTextColor.RED))
+            sender.sendMessage(Component.text("Usage: /${context.commandName} <$NODE_ID>").color(NamedTextColor.RED))
         }
 
-        val nodeId = ArgumentType.String("node identifier")
+        val nodeId = ArgumentType.String(NODE_ID)
 
         addSyntax(this::execute, nodeId)
     }
 
     private fun execute(sender: CommandSender, context: CommandContext) {
-        val nodeId = context.get<String>("node identifier")
+        val nodeId = context.get<String>(NODE_ID)
 
         if (sender !is Player) {
             sender.sendMessage(Component.text("A player is required").color(NamedTextColor.RED))

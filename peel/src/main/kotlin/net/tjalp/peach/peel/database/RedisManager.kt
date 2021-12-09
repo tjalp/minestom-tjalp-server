@@ -62,8 +62,8 @@ class RedisManager(
     /**
      * Returns the underlying [StatefulRedisConnection] instance
      */
-    fun query() : RedisReactiveCommands<String, String> {
-        if(isDisposed) {
+    fun query(): RedisReactiveCommands<String, String> {
+        if (isDisposed) {
             throw InstanceDisposedException()
         }
 
@@ -77,7 +77,7 @@ class RedisManager(
     @Suppress("EXPERIMENTAL_API_USAGE")
     val query: RedisCoroutinesCommands<String, String>
         get() {
-            if(isDisposed) {
+            if (isDisposed) {
                 throw InstanceDisposedException()
             }
 
@@ -90,8 +90,8 @@ class RedisManager(
      * @param handle Transaction handler
      * @return Result
      */
-    fun transactionLegacy(handle: RedisReactiveCommands<String, String>.() -> Unit) : Mono<TransactionResult> {
-        if(isDisposed) {
+    fun transactionLegacy(handle: RedisReactiveCommands<String, String>.() -> Unit): Mono<TransactionResult> {
+        if (isDisposed) {
             throw InstanceDisposedException()
         }
 
@@ -109,8 +109,8 @@ class RedisManager(
      * @return Result
      */
     @Suppress("EXPERIMENTAL_API_USAGE")
-    suspend fun transaction(handle: suspend RedisCoroutinesCommands<String, String>.() -> Unit) : TransactionResult {
-        if(isDisposed) {
+    suspend fun transaction(handle: suspend RedisCoroutinesCommands<String, String>.() -> Unit): TransactionResult {
+        if (isDisposed) {
             throw InstanceDisposedException()
         }
 
@@ -126,7 +126,7 @@ class RedisManager(
      * @param key The PubSub key
      * @param meta Optional namespace meta
      */
-    fun publish(key: SignalKey<EmptySignal>, meta: String? = null) : Mono<Long> {
+    fun publish(key: SignalKey<EmptySignal>, meta: String? = null): Mono<Long> {
         return publish(key, EmptySignal(), meta)
     }
 
@@ -137,7 +137,7 @@ class RedisManager(
      * @param signal The signal to transmit
      * @param meta Optional namespace meta
      */
-    fun <T : Any> publish(key: SignalKey<T>, signal: T, meta: String? = null) : Mono<Long> {
+    fun <T : Any> publish(key: SignalKey<T>, signal: T, meta: String? = null): Mono<Long> {
         val signalEl = GsonHelper.global().toJsonTree(signal)
         val signalObj = JsonObject()
 
@@ -156,7 +156,7 @@ class RedisManager(
      * @param meta Optional namespace meta
      * @return Signal stream
      */
-    fun <T : Any> subscribe(key: SignalKey<T>, meta: String? = null) : Flux<SignalMessage<T>> {
+    fun <T : Any> subscribe(key: SignalKey<T>, meta: String? = null): Flux<SignalMessage<T>> {
         val namespace: String = buildNamespace(key, meta)
 
         subscribe.reactive().subscribe(namespace).subscribe()
@@ -196,7 +196,7 @@ class RedisManager(
      * internal resources
      */
     override fun dispose() {
-        if(isDisposed) {
+        if (isDisposed) {
             throw InstanceDisposedException()
         }
 
@@ -212,8 +212,8 @@ class RedisManager(
      * @param meta The optional meta string
      * @return The namespace
      */
-    private fun buildNamespace(signal: SignalKey<*>, meta: String? = null) : String {
-        return if(meta == null) signal.namespace else "${signal.namespace}:$meta"
+    private fun buildNamespace(signal: SignalKey<*>, meta: String? = null): String {
+        return if (meta == null) signal.namespace else "${signal.namespace}:$meta"
     }
 
     /**

@@ -49,8 +49,22 @@ class PaperAppleServer : AppleServer() {
      * Set Velocity secret
      */
     private fun setVelocitySecret() {
-        redis.query().get("velocitySecret").subscribe { secret ->
-            PaperConfig.velocitySecretKey = secret.toByteArray(StandardCharsets.UTF_8)
+        val velocitySecret = redis.query().get("velocitySecret").block()
+        if (velocitySecret != null) PaperConfig.velocitySecretKey = velocitySecret.toByteArray(StandardCharsets.UTF_8)
+
+        // Set the secret on healthreporter connect
+        // TODO Remove this; this is temporary because
+        // for some reason after a few hours the secret
+        // cannot be resolved anymore, only when rebooting
+        // pumpkin, which is not really a good option
+        healthReporter.onConnectionOpen.subscribe {
+            redis.query().get("velocitySecret").subscribe { secret ->
+                if (secret == null) {
+                    logger.error("Tried to get the velocity secret, but it does not exist!")
+                    return@subscribe
+                }
+                PaperConfig.velocitySecretKey = secret.toByteArray(StandardCharsets.UTF_8)
+            }
         }
     }
 

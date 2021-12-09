@@ -37,11 +37,19 @@ class MelonService(
         pumpkin.nodeService.register(melonNode)
 
         for (player in request.playerList) {
+            val nodeId = player.currentAppleNode
+            val appleNode = pumpkin.nodeService.getAppleNode(nodeId)
+
+            if (appleNode == null) {
+                pumpkin.logger.error("Tried to register player on an unregistered apple node (node identifier: $nodeId)!")
+                return
+            }
+
             pumpkin.playerService.register(
                 uniqueId = UUID.fromString(player.uniqueId),
                 username = player.username,
                 melonNode = melonNode,
-                appleNode = pumpkin.nodeService.getAppleNode(player.currentAppleNode)!!
+                appleNode = appleNode
             )
         }
 

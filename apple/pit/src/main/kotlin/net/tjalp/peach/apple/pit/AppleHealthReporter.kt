@@ -15,7 +15,7 @@ class AppleHealthReporter(
     private val rpcStub: AppleServiceGrpc.AppleServiceStub = AppleServiceGrpc.newStub(apple.rpcChannel)
 
     override fun openHealthStream() {
-        GlobalScope.launch {
+        apple.scheduler.launch {
             apple.sendAppleHandshake()
             super.openHealthStream()
         }
