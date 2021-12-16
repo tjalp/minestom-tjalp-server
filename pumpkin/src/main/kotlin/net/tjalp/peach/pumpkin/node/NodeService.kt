@@ -72,7 +72,7 @@ class NodeService(
         thread.ensureMainThread()
         pumpkin.logger.info("Registering melon node (nodeId: ${node.nodeIdentifier}, port: ${node.port})")
 
-        if (!node.dockerNode.availablePorts.remove(node.port)) {
+        if (!node.dockerNode.usedPorts.add(node.port)) {
             pumpkin.logger.error("The port ${node.port} is not available, yet a melon node tried to register with it!")
 
             node.dockerNode.killNode(node)
@@ -101,7 +101,7 @@ class NodeService(
         thread.ensureMainThread()
         pumpkin.logger.info("Registering apple node (nodeId: ${node.nodeIdentifier}, server: ${node.server}, port: ${node.port})")
 
-        if (!node.dockerNode.availablePorts.remove(node.port)) {
+        if (!node.dockerNode.usedPorts.add(node.port)) {
             pumpkin.logger.error("The port ${node.port} is not available, yet an apple node tried to register with it!")
 
             node.dockerNode.killNode(node)
@@ -134,7 +134,7 @@ class NodeService(
             pumpkin.playerService.unregister(it as ConnectedPlayer)
         }
 
-        node.dockerNode.availablePorts += node.port
+        node.dockerNode.usedPorts -= node.port
         registeredMelonNodes.remove(node)
     }
 
@@ -147,7 +147,7 @@ class NodeService(
         thread.ensureMainThread()
         pumpkin.logger.info("Unregistering apple node (nodeId: ${node.nodeIdentifier})")
 
-        node.dockerNode.availablePorts += node.port
+        node.dockerNode.usedPorts -= node.port
         registeredAppleNodes.remove(node)
 
         // Send out redis signal

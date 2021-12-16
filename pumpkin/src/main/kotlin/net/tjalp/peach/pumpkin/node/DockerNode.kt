@@ -15,6 +15,8 @@ import net.tjalp.peach.peel.util.GsonHelper
 import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.pumpkin.PumpkinServer
 import java.time.Duration
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 class DockerNode(
     val details: DockerDetails
@@ -48,11 +50,7 @@ class DockerNode(
     /**
      * The available ports on this docker node
      */
-    internal val availablePorts = HashSet<Int>().apply {
-        repeat(1000) {
-            add(it + 25000)
-        }
-    }
+    internal val usedPorts = HashSet<Int>()
 
     /**
      * Create a [Node] on this [DockerNode]
@@ -72,11 +70,11 @@ class DockerNode(
     ): UnregisteredNode {
         val defConfig = config ?: NodeConfig()
         val defNodeId = nodeId ?: "${type.shortName}-${generateRandomString(6)}"
-        val defPort = port ?: availablePorts.random()
+        val defPort = port ?: Random.nextInt(IntRange(25000, 25999))
         // TODO DEVELOPMENT THIS SHOULD BE BETTER
         val defMemory = memory ?: if (type == Node.Type.APPLE_RED) 2048L else 512L
 
-        if (defPort !in availablePorts) {
+        if (defPort in usedPorts) {
             throw IllegalArgumentException("Port $defPort is not available on this docker node (${this.config.dockerHost.host})")
         }
 
