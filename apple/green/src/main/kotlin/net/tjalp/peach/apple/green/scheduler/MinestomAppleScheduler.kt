@@ -6,7 +6,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import net.minestom.server.MinecraftServer
 import net.minestom.server.timer.Task
-import net.minestom.server.timer.TaskStatus
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
 import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import java.time.Duration
@@ -114,7 +113,7 @@ class MinestomAppleScheduler : AppleScheduler() {
         }
 
         taskList.removeIf {
-            (it as MinestomSchedulerTask).ref.status != TaskStatus.SCHEDULED
+            !(it as MinestomSchedulerTask).ref.isAlive
         }
 
         lastCleanTime = System.currentTimeMillis()
@@ -136,7 +135,7 @@ class MinestomAppleScheduler : AppleScheduler() {
         }
 
         override fun isDisposed(): Boolean {
-            return ref.status == TaskStatus.CANCELLED || ref.status == TaskStatus.FINISHED
+            return !ref.isAlive
         }
     }
 }

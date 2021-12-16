@@ -15,7 +15,6 @@ import net.tjalp.peach.apple.green.registry.registerDimensions
 import net.tjalp.peach.apple.green.scheduler.MinestomAppleScheduler
 import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
-import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.peel.util.GsonHelper
 
 fun main(args: Array<String>) {
@@ -72,7 +71,7 @@ class MinestomAppleServer : AppleServer() {
         overworld.chunkGenerator = SimpleGenerator()
 
         // Specify a shutdown task
-        MinecraftServer.getSchedulerManager().buildShutdownTask(this::shutdown).schedule()
+        MinecraftServer.getSchedulerManager().buildShutdownTask(this::shutdown)
     }
 
     override fun start() {
