@@ -11,6 +11,7 @@ import net.minestom.server.command.builder.CommandContext
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.tjalp.peach.apple.green.MinestomAppleServer
 import net.tjalp.peach.apple.pit.command.NODE_ID
+import net.tjalp.peach.apple.pit.command.NODE_PORT
 import net.tjalp.peach.apple.pit.command.NODE_TYPE
 import net.tjalp.peach.proto.apple.Apple
 
@@ -29,9 +30,13 @@ class PeachCommand(
         val kill = ArgumentType.Literal("kill")
         val nodeType = ArgumentType.String(NODE_TYPE)
         val nodeId = ArgumentType.String(NODE_ID)
+        val nodePort = ArgumentType.Integer(NODE_PORT)
 
+        // TODO The next few lines can probably be improved if ArgumentLoop in Minestom is fixed.
+        // You can currently only create loops with a forced order, which is inconvenient and removes the entire point.
         addSyntax(this::executeNodeCreate, node, create, nodeType)
         addSyntax(this::executeNodeCreate, node, create, nodeType, nodeId)
+        addSyntax(this::executeNodeCreate, node, create, nodeType, nodeId, nodePort)
         addSyntax(this::executeNodeStop, node, stop, nodeId)
         addSyntax(this::executeNodeKill, node, kill, nodeId)
     }
@@ -39,6 +44,7 @@ class PeachCommand(
     private fun executeNodeCreate(sender: CommandSender, context: CommandContext) {
         val nodeType = context.get<String>(NODE_TYPE)
         val nodeId = context.get<String>(NODE_ID)
+        val nodePort = context.get<Int>(NODE_PORT)
 
         sender.sendMessage(Component.text("Creating node...").color(NamedTextColor.YELLOW))
 
@@ -47,6 +53,7 @@ class PeachCommand(
                 .setNodeType(nodeType)
 
             if (nodeId != null) request.nodeIdentifier = nodeId
+            if (nodePort != null) request.nodePort = nodePort
 
             val response = apple.rpcStub.createNode(request.build())
 

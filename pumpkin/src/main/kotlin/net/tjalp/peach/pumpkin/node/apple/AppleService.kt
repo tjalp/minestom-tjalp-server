@@ -88,16 +88,14 @@ class AppleService(
         } ?: return
         val dockerNode = pumpkin.dockerService.randomDockerNode()
         val nodeId = request.nodeIdentifier
+        val nodePort = request.nodePort
 
         val node = try {
-            if (nodeId == "") {
-                dockerNode.createNode(type)
-            } else {
-                dockerNode.createNode(
-                    type = type,
-                    nodeId = nodeId
-                )
-            }
+            dockerNode.createNode(
+                type = type,
+                nodeId = nodeId,
+                port = nodePort
+            )
         } catch (ex: Exception) {
             pumpkin.logger.error("An error occured while trying to create node: ${ex.message}")
             response.onNext(Apple.CreateNodeResponse.newBuilder()

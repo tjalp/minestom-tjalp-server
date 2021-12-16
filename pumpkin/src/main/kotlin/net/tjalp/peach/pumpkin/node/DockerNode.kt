@@ -64,23 +64,29 @@ class DockerNode(
      */
     fun createNode(
         type: Node.Type,
-        config: NodeConfig = NodeConfig(),
-        nodeId: String = "${type.shortName}-${generateRandomString(6)}",
-        port: Int = availablePorts.random(),
-        memory: Long = if (type == Node.Type.APPLE_RED) 2048L else 512L, // TODO DEVELOPMENT THIS SHOULD BE BETTER
+        config: NodeConfig? = null,
+        nodeId: String? = null,
+        port: Int? = null,
+        memory: Long? = null,
         maxCpuPercent: Long? = null
     ): UnregisteredNode {
-        if (port !in availablePorts) {
-            throw IllegalArgumentException("Port $port is not available on this docker node (${this.config.dockerHost.host})")
+        val defConfig = config ?: NodeConfig()
+        val defNodeId = nodeId ?: "${type.shortName}-${generateRandomString(6)}"
+        val defPort = port ?: availablePorts.random()
+        // TODO DEVELOPMENT THIS SHOULD BE BETTER
+        val defMemory = memory ?: if (type == Node.Type.APPLE_RED) 2048L else 512L
+
+        if (defPort !in availablePorts) {
+            throw IllegalArgumentException("Port $defPort is not available on this docker node (${this.config.dockerHost.host})")
         }
 
-        val exposedPort = ExposedPort.tcp(port)
+        val exposedPort = ExposedPort.tcp(defPort)
         val ports = Ports().apply {
-            bind(exposedPort, Ports.Binding.bindPort(port))
+            bind(exposedPort, Ports.Binding.bindPort(defPort))
         }
         val hostConfig = HostConfig.newHostConfig()
-            .withMemory(memory * 1_000_000)
-            .withMemoryReservation(memory * 1_000_000)
+            .withMemory(defMemory * 1_000_000)
+            .withMemoryReservation(defMemory * 1_000_000)
             .withPortBindings(ports)
             .withAutoRemove(true)
             .withExtraHosts("host.docker.internal:host-gateway")
@@ -90,20 +96,20 @@ class DockerNode(
         if (maxCpuPercent != null) hostConfig.withCpuPercent(maxCpuPercent)
 
         // Set the config properties
-        config.nodeId = nodeId
-        config.port = port
+        defConfig.nodeId = defNodeId
+        defConfig.port = defPort
 
         pumpkin.mainThread.asyncTask {
             client.createContainerCmd(type.imageName)
-                .withName(nodeId)
+                .withName(defNodeId)
                 .withExposedPorts(exposedPort)
                 .withHostConfig(hostConfig)
-                .withEnv("NODE_CONFIG=${GsonHelper.global().toJson(config)}", "PORT=$port")
+                .withEnv("NODE_CONFIG=${GsonHelper.global().toJson(defConfig)}", "PORT=$defPort")
                 .exec()
-            client.startContainerCmd(nodeId).exec()
+            client.startContainerCmd(defNodeId).exec()
         }
 
-        return UnregisteredNode(nodeId, type)
+        return UnregisteredNode(defNodeId, type)
     }
 
     /**

@@ -29,6 +29,7 @@ message PlayerSwitchResponse {
 message CreateNodeRequest {
     string node_type = 1;
     string node_identifier = 2;
+    int32 node_port = 3;
 }
 
 message CreateNodeResponse {

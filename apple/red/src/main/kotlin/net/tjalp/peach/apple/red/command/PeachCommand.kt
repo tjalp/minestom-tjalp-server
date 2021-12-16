@@ -1,12 +1,13 @@
 package net.tjalp.peach.apple.red.command
 
 import com.mojang.brigadier.Command
+import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
+import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.builder.RequiredArgumentBuilder.argument
 import com.mojang.brigadier.context.CommandContext
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -14,6 +15,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.minecraft.commands.CommandSourceStack
 import net.tjalp.peach.apple.pit.command.NODE_ID
+import net.tjalp.peach.apple.pit.command.NODE_PORT
 import net.tjalp.peach.apple.pit.command.NODE_TYPE
 import net.tjalp.peach.apple.red.PaperAppleServer
 import net.tjalp.peach.proto.apple.Apple
@@ -37,6 +39,10 @@ class PeachCommand(
                     .then(literal<CommandSourceStack>("create")
                         .then(argument<CommandSourceStack, String>(NODE_TYPE, string())
                             .then(argument<CommandSourceStack, String>(NODE_ID, string())
+                                .then(argument<CommandSourceStack?, Int?>(NODE_PORT, integer())
+                                    .executes { context ->
+                                        this.executeNodeCreate(context, getString(context, NODE_ID), getInteger(context, NODE_PORT))
+                                    })
                                 .executes { context ->
                                     this.executeNodeCreate(context, getString(context, NODE_ID))
                                 })
@@ -50,7 +56,7 @@ class PeachCommand(
         )
     }
 
-    private fun executeNodeCreate(context: CommandContext<CommandSourceStack>, nodeId: String? = null): Int {
+    private fun executeNodeCreate(context: CommandContext<CommandSourceStack>, nodeId: String? = null, nodePort: Int? = null): Int {
         val sender = context.source.bukkitSender
         val nodeType = getString(context, NODE_TYPE)
 
@@ -61,6 +67,7 @@ class PeachCommand(
                 .setNodeType(nodeType)
 
             if (nodeId != null) request.nodeIdentifier = nodeId
+            if (nodePort != null) request.nodePort = nodePort
 
             val response = apple.rpcStub.createNode(request.build())
 
