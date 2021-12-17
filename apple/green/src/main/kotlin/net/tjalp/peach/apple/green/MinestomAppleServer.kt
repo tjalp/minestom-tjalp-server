@@ -81,8 +81,7 @@ class MinestomAppleServer : AppleServer() {
         // MojangAuth.init();
 
         // Enable the proxy (must be done after redis has connected)
-        val velocitySecret = redis.query().get("velocitySecret").block()
-        if (velocitySecret != null) VelocityProxy.enable(velocitySecret) else MojangAuth.init()
+        setVelocitySecret()
 
         // Set the secret on healthreporter connect
         // TODO Remove this; this is temporary because
@@ -90,13 +89,7 @@ class MinestomAppleServer : AppleServer() {
         // cannot be resolved anymore, only when rebooting
         // pumpkin, which is not really a good option
         healthReporter.onConnectionOpen.subscribe {
-            redis.query().get("velocitySecret").subscribe { secret ->
-                if (secret == null) {
-                    logger.error("Tried to get the velocity secret, but it does not exist!")
-                    return@subscribe
-                }
-                VelocityProxy.enable(secret)
-            }
+            setVelocitySecret()
         }
 
         // Start the server
@@ -115,5 +108,19 @@ class MinestomAppleServer : AppleServer() {
         man.register(StopCommand())
         man.register(SwitchCommand())
         man.register(TeleportCommand())
+    }
+
+    /**
+     * Set the Velocity secret, which is queried
+     * from the redis connection
+     */
+    private fun setVelocitySecret() {
+        redis.query().get("velocitySecret").subscribe { secret ->
+            if (secret == null) {
+                logger.error("Tried to get the velocity secret, but it does not exist!")
+                return@subscribe
+            }
+            VelocityProxy.enable(secret)
+        }
     }
 }
