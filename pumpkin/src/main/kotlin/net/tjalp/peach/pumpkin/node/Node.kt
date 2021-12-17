@@ -25,11 +25,4 @@ interface Node : Comparable<Node>, Disposable {
      */
     val dockerNode: DockerNode
 
-    enum class Type(val fullName: String, val shortName: String, val imageName: String) {
-        PUMPKIN("Pumpkin", "p", "pumpkin"),
-        MELON("Melon", "m", "melon"),
-        APPLE_GREEN("Apple Green", "ag", "apple-green"),
-        APPLE_RED("Apple Red", "ar", "apple-red");
-    }
-
 }

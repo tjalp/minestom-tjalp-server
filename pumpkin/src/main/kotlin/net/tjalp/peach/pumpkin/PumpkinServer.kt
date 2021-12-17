@@ -3,10 +3,10 @@ package net.tjalp.peach.pumpkin
 import net.tjalp.peach.peel.config.JsonConfig
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.exception.FailedOperationException
+import net.tjalp.peach.peel.node.NodeType.*
 import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.pumpkin.config.PumpkinConfig
 import net.tjalp.peach.pumpkin.node.DockerService
-import net.tjalp.peach.pumpkin.node.Node.Type.*
 import net.tjalp.peach.pumpkin.node.NodeService
 import net.tjalp.peach.pumpkin.node.RpcService
 import net.tjalp.peach.pumpkin.player.PlayerService

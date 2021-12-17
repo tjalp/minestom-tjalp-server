@@ -4,6 +4,7 @@ import com.google.protobuf.Empty
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.Apple.AppleHandshakeRequest
 import net.tjalp.peach.proto.apple.Apple.AppleHandshakeResponse
@@ -83,7 +84,7 @@ class AppleService(
         request: Apple.CreateNodeRequest,
         response: StreamObserver<Apple.CreateNodeResponse>
     ) {
-        val type = Node.Type.values().firstOrNull {
+        val type = NodeType.values().firstOrNull {
             it.name == request.nodeType.uppercase()
         } ?: return
         val dockerNode = pumpkin.dockerService.randomDockerNode()

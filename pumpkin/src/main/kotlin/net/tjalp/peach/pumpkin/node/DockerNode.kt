@@ -11,6 +11,7 @@ import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
 import com.github.dockerjava.transport.DockerHttpClient
 import net.tjalp.peach.peel.config.DockerDetails
 import net.tjalp.peach.peel.config.NodeConfig
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.peel.util.GsonHelper
 import net.tjalp.peach.peel.util.generateRandomString
 import net.tjalp.peach.pumpkin.PumpkinServer
@@ -61,7 +62,7 @@ class DockerNode(
      * @param maxCpuPercent The maximum percentage of cpu this node may use. 100% is equal to one core
      */
     fun createNode(
-        type: Node.Type,
+        type: NodeType,
         config: NodeConfig? = null,
         nodeId: String? = null,
         port: Int? = null,
@@ -72,7 +73,7 @@ class DockerNode(
         val defNodeId = nodeId ?: "${type.shortName}-${generateRandomString(6)}"
         val defPort = port ?: Random.nextInt(IntRange(25000, 25999))
         // TODO DEVELOPMENT THIS SHOULD BE BETTER
-        val defMemory = memory ?: if (type == Node.Type.APPLE_RED) 2048L else 512L
+        val defMemory = memory ?: if (type == NodeType.APPLE_RED) 2048L else 512L
 
         if (defPort in usedPorts) {
             throw IllegalArgumentException("Port $defPort is not available on this docker node (${this.config.dockerHost.host})")
