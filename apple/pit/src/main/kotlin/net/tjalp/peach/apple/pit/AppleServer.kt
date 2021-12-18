@@ -107,7 +107,7 @@ abstract class AppleServer {
         healthReporter = AppleHealthReporter(this)
         redis = RedisManager(
             logger,
-            "apple",
+            nodeId,
             redisDetails.server,
             redisDetails.port,
             redisDetails.password

@@ -88,8 +88,8 @@ class AppleService(
             it.name == request.nodeType.uppercase()
         } ?: return
         val dockerNode = pumpkin.dockerService.randomDockerNode()
-        val nodeId = request.nodeIdentifier
-        val nodePort = request.nodePort
+        val nodeId = if (request.nodeIdentifier.equals("")) null else request.nodeIdentifier
+        val nodePort = if (request.nodePort == 0) null else request.nodePort
 
         val node = try {
             dockerNode.createNode(
