@@ -18,6 +18,7 @@ import net.tjalp.peach.apple.pit.command.NODE_ID
 import net.tjalp.peach.apple.pit.command.NODE_PORT
 import net.tjalp.peach.apple.pit.command.NODE_TYPE
 import net.tjalp.peach.apple.red.PaperAppleServer
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer
 
@@ -46,6 +47,13 @@ class PeachCommand(
                                 .executes { context ->
                                     this.executeNodeCreate(context, getString(context, NODE_ID))
                                 })
+                            .suggests { context, builder ->
+                                val currentString = getString(context, NODE_TYPE)
+                                for (value in NodeType.values()) {
+                                    if (value.name.lowercase().startsWith(currentString.lowercase())) builder.suggest(value.name)
+                                }
+                                builder.buildFuture()
+                            }
                             .executes(this::executeNodeCreate)))
                     .then(literal<CommandSourceStack>("stop")
                         .then(argument<CommandSourceStack, String>(NODE_ID, string())

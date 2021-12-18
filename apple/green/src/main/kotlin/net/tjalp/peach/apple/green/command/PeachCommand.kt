@@ -13,6 +13,7 @@ import net.tjalp.peach.apple.green.MinestomAppleServer
 import net.tjalp.peach.apple.pit.command.NODE_ID
 import net.tjalp.peach.apple.pit.command.NODE_PORT
 import net.tjalp.peach.apple.pit.command.NODE_TYPE
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
 
 class PeachCommand(
@@ -29,8 +30,8 @@ class PeachCommand(
         val stop = ArgumentType.Literal("stop")
         val kill = ArgumentType.Literal("kill")
         val nodeType = ArgumentType.String(NODE_TYPE)
-        val nodeId = ArgumentType.String(NODE_ID)
-        val nodePort = ArgumentType.Integer(NODE_PORT)
+        val nodeId = ArgumentType.String(NODE_ID).setDefaultValue(null)
+        val nodePort = ArgumentType.Integer(NODE_PORT).setDefaultValue(null)
 
         // TODO The next few lines can probably be improved if ArgumentLoop in Minestom is fixed.
         // You can currently only create loops with a forced order, which is inconvenient and removes the entire point.
@@ -42,7 +43,7 @@ class PeachCommand(
     }
 
     private fun executeNodeCreate(sender: CommandSender, context: CommandContext) {
-        val nodeType = context.get<String>(NODE_TYPE)
+        val nodeType = context.get<NodeType>(NODE_TYPE)
         val nodeId = context.get<String>(NODE_ID)
         val nodePort = context.get<Int>(NODE_PORT)
 
@@ -50,7 +51,7 @@ class PeachCommand(
 
         apple.scheduler.launch {
             val request = Apple.CreateNodeRequest.newBuilder()
-                .setNodeType(nodeType)
+                .setNodeType(nodeType.name)
 
             if (nodeId != null) request.nodeIdentifier = nodeId
             if (nodePort != null) request.nodePort = nodePort
