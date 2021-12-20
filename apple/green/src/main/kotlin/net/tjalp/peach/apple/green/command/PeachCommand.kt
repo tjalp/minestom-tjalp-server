@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.CommandContext
+import net.minestom.server.command.builder.arguments.ArgumentEnum
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.tjalp.peach.apple.green.MinestomAppleServer
 import net.tjalp.peach.apple.pit.command.NODE_ID
@@ -29,7 +30,7 @@ class PeachCommand(
         val create = ArgumentType.Literal("create")
         val stop = ArgumentType.Literal("stop")
         val kill = ArgumentType.Literal("kill")
-        val nodeType = ArgumentType.String(NODE_TYPE)
+        val nodeType = ArgumentType.Enum(NODE_TYPE, NodeType::class.java).setFormat(ArgumentEnum.Format.LOWER_CASED)
         val nodeId = ArgumentType.String(NODE_ID).setDefaultValue(null)
         val nodePort = ArgumentType.Integer(NODE_PORT).setDefaultValue(null)
 

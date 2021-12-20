@@ -47,10 +47,11 @@ class PeachCommand(
                                 .executes { context ->
                                     this.executeNodeCreate(context, getString(context, NODE_ID))
                                 })
-                            .suggests { context, builder ->
-                                val currentString = getString(context, NODE_TYPE)
+                            .suggests { _, builder ->
+                                val input = builder.remainingLowerCase
                                 for (value in NodeType.values()) {
-                                    if (value.name.lowercase().startsWith(currentString.lowercase())) builder.suggest(value.name)
+                                    val name = value.name.lowercase()
+                                    if (input == "" || name.startsWith(input)) builder.suggest(name)
                                 }
                                 builder.buildFuture()
                             }
