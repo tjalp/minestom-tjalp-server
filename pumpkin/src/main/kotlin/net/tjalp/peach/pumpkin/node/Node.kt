@@ -1,5 +1,6 @@
 package net.tjalp.peach.pumpkin.node
 
+import net.tjalp.peach.peel.node.NodeType
 import reactor.core.Disposable
 
 /**
@@ -24,5 +25,10 @@ interface Node : Comparable<Node>, Disposable {
      * The docker node this node is running on
      */
     val dockerNode: DockerNode
+
+    /**
+     * What type of node this is
+     */
+    val type: NodeType
 
 }

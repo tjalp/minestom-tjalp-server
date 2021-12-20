@@ -11,6 +11,7 @@ import net.tjalp.peach.proto.apple.Apple.AppleHandshakeResponse
 import net.tjalp.peach.proto.apple.AppleServiceGrpc.AppleServiceImplBase
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.Node
+import net.tjalp.peach.pumpkin.node.PlayerNode
 import java.net.InetSocketAddress
 import java.util.*
 
@@ -27,6 +28,7 @@ class AppleService(
         val hostAddress = socket.address.hostAddress
         val appleNode = AppleServerNode(
             pumpkin,
+            NodeType.valueOf(request.nodeType),
             pumpkin.dockerService.registeredNodes.first {
                 it.details.server == hostAddress
             },
@@ -135,6 +137,31 @@ class AppleService(
         node?.dockerNode?.killNode(node)
 
         response.onNext(Empty.getDefaultInstance())
+        response.onCompleted()
+    }
+
+    override fun fetchNodes(request: Apple.NodeListFilter, response: StreamObserver<Apple.NodeList>) {
+        val res = Apple.NodeList.newBuilder()
+        val nodes = pumpkin.nodeService.nodes
+        val filterNodeType = request.filterNodeType
+
+        val filteredNodes = nodes.filter {
+            if (filterNodeType != "" && NodeType.valueOf(filterNodeType) == it.type) {
+                return@filter false
+            }
+
+            return@filter true
+        }.forEach {
+            val nodeInfo = Apple.NodeInfo.newBuilder().apply {
+                nodeIdentifier = it.nodeIdentifier
+                nodeType = it.type.name
+                if (it is PlayerNode) playerCount = it.playerCount
+            }
+
+            res.addNodeInfo(nodeInfo)
+        }
+
+        response.onNext(res.build())
         response.onCompleted()
     }
 

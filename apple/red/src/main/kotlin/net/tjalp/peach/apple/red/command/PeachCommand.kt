@@ -8,7 +8,10 @@ import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.builder.RequiredArgumentBuilder.argument
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.Suggestions
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -21,10 +24,14 @@ import net.tjalp.peach.apple.red.PaperAppleServer
 import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer
+import java.util.concurrent.CompletableFuture
 
 class PeachCommand(
     val apple: PaperAppleServer
 ) {
+
+    private lateinit var nodeListCache: List<Apple.NodeInfo>
+    private var lastCacheTime = 0L
 
     init {
         val server = apple.plugin.server
@@ -58,9 +65,11 @@ class PeachCommand(
                             .executes(this::executeNodeCreate)))
                     .then(literal<CommandSourceStack>("stop")
                         .then(argument<CommandSourceStack, String>(NODE_ID, string())
+                            .suggests(this::suggestNodeIdList)
                             .executes(this::executeNodeStop)))
                     .then(literal<CommandSourceStack>("kill")
                         .then(argument<CommandSourceStack?, String>(NODE_ID, string())
+                            .suggests(this::suggestNodeIdList)
                             .executes(this::executeNodeKill))))
         )
     }
@@ -147,5 +156,27 @@ class PeachCommand(
         }
 
         return Command.SINGLE_SUCCESS
+    }
+
+    private fun suggestNodeIdList(context: CommandContext<CommandSourceStack>, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
+        val input = builder.remainingLowerCase
+
+        if (System.currentTimeMillis() - lastCacheTime >= 5000) {
+            runBlocking {
+                nodeListCache = apple.fetchNodes().sortedBy {
+                    it.nodeIdentifier
+                }
+                lastCacheTime = System.currentTimeMillis()
+            }
+        }
+
+        for (info in nodeListCache) {
+            val nodeId = info.nodeIdentifier
+
+            if (nodeId.lowercase().startsWith(input)) {
+                builder.suggest(nodeId)
+            }
+        }
+        return builder.buildFuture()
     }
 }

@@ -1,5 +1,6 @@
 package net.tjalp.peach.pumpkin.node.apple
 
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple.AppleHealthReport
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.DockerNode
@@ -9,6 +10,7 @@ import net.tjalp.peach.pumpkin.player.PeachPlayer
 
 class AppleServerNode(
     private val pumpkin: PumpkinServer,
+    override val type: NodeType,
     override val dockerNode: DockerNode,
     override val nodeIdentifier: String,
     override val server: String,

@@ -1,5 +1,6 @@
 package net.tjalp.peach.pumpkin.node.melon
 
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.melon.Melon
 import net.tjalp.peach.pumpkin.PumpkinServer
 import net.tjalp.peach.pumpkin.node.DockerNode
@@ -14,6 +15,7 @@ class MelonServerNode(
     override val port: Int
 ) : MelonNode {
 
+    override val type: NodeType = NodeType.MELON
     override val healthMonitor: HealthMonitor<Melon.MelonHealthReport> = HealthMonitor(this)
     override val players: List<PeachPlayer>
         get() = connectedPlayers

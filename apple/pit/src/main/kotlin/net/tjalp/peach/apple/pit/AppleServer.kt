@@ -1,7 +1,6 @@
 package net.tjalp.peach.apple.pit
 
 import io.grpc.ManagedChannel
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.tjalp.peach.apple.pit.config.AppleConfig
@@ -10,6 +9,7 @@ import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.network.HealthReporter
 import net.tjalp.peach.peel.network.PeachRPC
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
 import net.tjalp.peach.proto.apple.AppleServiceGrpcKt.AppleServiceCoroutineStub
 import org.slf4j.Logger
@@ -22,6 +22,8 @@ import java.util.*
  * should have.
  */
 abstract class AppleServer {
+
+    abstract val nodeType: NodeType
 
     /**
      * The slf4j logger every server should
@@ -142,10 +144,24 @@ abstract class AppleServer {
     internal suspend fun sendAppleHandshake() {
         val request = Apple.AppleHandshakeRequest.newBuilder()
             .setNodeIdentifier(nodeId)
+            .setNodeType(nodeType.name)
             .setPort(config.port)
 
         logger.info("Sending apple handshake")
         val response = rpcStub.appleHandshake(request.build())
+    }
+
+    /**
+     * Fetch a list of nodes with the specified
+     * filters
+     *
+     * @param filter What the nodes should be filtered on
+     * @return The list of [Apple.NodeInfo]s
+     */
+    suspend fun fetchNodes(filter: Apple.NodeListFilter.Builder.() -> Unit = {}): List<Apple.NodeInfo> {
+        return rpcStub.fetchNodes(
+            Apple.NodeListFilter.newBuilder().apply(filter).build()
+        ).nodeInfoList
     }
 
     /**

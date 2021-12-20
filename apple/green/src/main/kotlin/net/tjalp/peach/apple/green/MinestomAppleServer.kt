@@ -15,6 +15,7 @@ import net.tjalp.peach.apple.green.registry.registerDimensions
 import net.tjalp.peach.apple.green.scheduler.MinestomAppleScheduler
 import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.peel.util.GsonHelper
 
 fun main(args: Array<String>) {
@@ -26,6 +27,8 @@ fun main(args: Array<String>) {
 }
 
 class MinestomAppleServer : AppleServer() {
+
+    override val nodeType: NodeType = NodeType.APPLE_GREEN
 
     private lateinit var globalScheduler: MinestomAppleScheduler
 

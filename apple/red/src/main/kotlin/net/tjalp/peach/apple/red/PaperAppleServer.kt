@@ -8,11 +8,14 @@ import net.tjalp.peach.apple.red.command.PeachCommand
 import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
 import net.tjalp.peach.apple.red.scheduler.PaperAppleScheduler
+import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.peel.util.GsonHelper
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.charset.StandardCharsets
 
 class PaperAppleServer : AppleServer() {
+
+    override val nodeType: NodeType = NodeType.APPLE_RED
 
     private lateinit var globalScheduler: PaperAppleScheduler
     lateinit var plugin: Plugin

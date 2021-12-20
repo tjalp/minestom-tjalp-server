@@ -1,6 +1,7 @@
 package net.tjalp.peach.apple.green.command
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -10,6 +11,8 @@ import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.CommandContext
 import net.minestom.server.command.builder.arguments.ArgumentEnum
 import net.minestom.server.command.builder.arguments.ArgumentType
+import net.minestom.server.command.builder.suggestion.Suggestion
+import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.tjalp.peach.apple.green.MinestomAppleServer
 import net.tjalp.peach.apple.pit.command.NODE_ID
 import net.tjalp.peach.apple.pit.command.NODE_PORT
@@ -20,6 +23,9 @@ import net.tjalp.peach.proto.apple.Apple
 class PeachCommand(
     val apple: MinestomAppleServer
 ) : Command("peach") {
+
+    private lateinit var nodeListCache: List<Apple.NodeInfo>
+    private var lastCacheTime = 0L
 
     init {
         setDefaultExecutor { sender, _ ->
@@ -39,8 +45,8 @@ class PeachCommand(
         addSyntax(this::executeNodeCreate, node, create, nodeType)
         addSyntax(this::executeNodeCreate, node, create, nodeType, nodeId)
         addSyntax(this::executeNodeCreate, node, create, nodeType, nodeId, nodePort)
-        addSyntax(this::executeNodeStop, node, stop, nodeId)
-        addSyntax(this::executeNodeKill, node, kill, nodeId)
+        addSyntax(this::executeNodeStop, node, stop, nodeId.setSuggestionCallback(this::suggestNodeIdList))
+        addSyntax(this::executeNodeKill, node, kill, nodeId.setSuggestionCallback(this::suggestNodeIdList))
     }
 
     private fun executeNodeCreate(sender: CommandSender, context: CommandContext) {
@@ -117,6 +123,27 @@ class PeachCommand(
 
             sender.sendMessage(Component.text("Succesfully killed node with identifier ").color(NamedTextColor.GREEN)
                 .append(Component.text(nodeId).color(NamedTextColor.DARK_GREEN)))
+        }
+    }
+
+    private fun suggestNodeIdList(sender: CommandSender, context: CommandContext, suggestion: Suggestion) {
+        val input = suggestion.input.lowercase()
+
+        if (System.currentTimeMillis() - lastCacheTime >= 5000) {
+            runBlocking {
+                nodeListCache = apple.fetchNodes().sortedBy {
+                    it.nodeIdentifier
+                }
+                lastCacheTime = System.currentTimeMillis()
+            }
+        }
+
+        for (info in nodeListCache) {
+            val nodeId = info.nodeIdentifier
+
+            if (nodeId.lowercase().startsWith(input)) {
+                suggestion.addEntry(SuggestionEntry(nodeId))
+            }
         }
     }
 }

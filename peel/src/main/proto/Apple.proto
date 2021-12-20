@@ -10,7 +10,8 @@ message AppleHealthReport {
 
 message AppleHandshakeRequest {
     string node_identifier = 1;
-    int32 port = 2;
+    string node_type = 2;
+    int32 port = 3;
 }
 
 message AppleHandshakeResponse {
@@ -46,6 +47,20 @@ message KillNodeRequest {
     string node_identifier = 1;
 }
 
+message NodeInfo {
+    string node_identifier = 1;
+    string node_type = 2;
+    int32 player_count = 3;
+}
+
+message NodeListFilter {
+    string filter_node_type = 1;
+}
+
+message NodeList {
+    repeated NodeInfo node_info = 1;
+}
+
 service AppleService {
 
     rpc HealthStatus (stream AppleHealthReport) returns (google.protobuf.Empty);
@@ -59,4 +74,6 @@ service AppleService {
     rpc StopNode (StopNodeRequest) returns (google.protobuf.Empty);
 
     rpc KillNode (KillNodeRequest) returns (google.protobuf.Empty);
+
+    rpc FetchNodes (NodeListFilter) returns (NodeList);
 }
