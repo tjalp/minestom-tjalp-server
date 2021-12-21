@@ -23,6 +23,7 @@ import net.tjalp.peach.apple.pit.command.NODE_TYPE
 import net.tjalp.peach.apple.red.PaperAppleServer
 import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
+import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer
 import java.util.concurrent.CompletableFuture
 
@@ -161,22 +162,30 @@ class PeachCommand(
     private fun suggestNodeIdList(context: CommandContext<CommandSourceStack>, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
         val input = builder.remainingLowerCase
 
-        if (System.currentTimeMillis() - lastCacheTime >= 5000) {
-            runBlocking {
-                nodeListCache = apple.fetchNodes().sortedBy {
-                    it.nodeIdentifier
+        context.source.bukkitSender.sendMessage("Starting suggestions... (${Bukkit.getServer().currentTick})")
+
+        return CompletableFuture.supplyAsync {
+            if (System.currentTimeMillis() - lastCacheTime >= 5000) {
+                context.source.bukkitSender.sendMessage("§eFetching nodes... (${Bukkit.getServer().currentTick})")
+                runBlocking {
+                    nodeListCache = apple.fetchNodes().sortedBy {
+                        it.nodeIdentifier
+                    }
+                    lastCacheTime = System.currentTimeMillis()
                 }
-                lastCacheTime = System.currentTimeMillis()
+                context.source.bukkitSender.sendMessage("§aFetched nodes! (${Bukkit.getServer().currentTick})")
             }
-        }
 
-        for (info in nodeListCache) {
-            val nodeId = info.nodeIdentifier
+            for (info in nodeListCache) {
+                val nodeId = info.nodeIdentifier
 
-            if (nodeId.lowercase().startsWith(input)) {
-                builder.suggest(nodeId)
+                if (nodeId.lowercase().startsWith(input)) {
+                    context.source.bukkitSender.sendMessage("§dAdding node $nodeId... (${Bukkit.getServer().currentTick})")
+                    builder.suggest(nodeId)
+                }
             }
+            context.source.bukkitSender.sendMessage("§2Done (${Bukkit.getServer().currentTick})!")
+            builder.build()
         }
-        return builder.buildFuture()
     }
 }

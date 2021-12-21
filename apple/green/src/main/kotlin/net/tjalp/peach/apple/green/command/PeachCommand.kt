@@ -129,20 +129,20 @@ class PeachCommand(
     private fun suggestNodeIdList(sender: CommandSender, context: CommandContext, suggestion: Suggestion) {
         val input = suggestion.input.lowercase()
 
-        if (System.currentTimeMillis() - lastCacheTime >= 5000) {
-            runBlocking {
+        apple.scheduler.launch {
+            if (System.currentTimeMillis() - lastCacheTime >= 5000) {
                 nodeListCache = apple.fetchNodes().sortedBy {
                     it.nodeIdentifier
                 }
                 lastCacheTime = System.currentTimeMillis()
             }
-        }
 
-        for (info in nodeListCache) {
-            val nodeId = info.nodeIdentifier
+            for (info in nodeListCache) {
+                val nodeId = info.nodeIdentifier
 
-            if (nodeId.lowercase().startsWith(input)) {
-                suggestion.addEntry(SuggestionEntry(nodeId))
+                if (nodeId.lowercase().startsWith(input)) {
+                    suggestion.addEntry(SuggestionEntry(nodeId))
+                }
             }
         }
     }
