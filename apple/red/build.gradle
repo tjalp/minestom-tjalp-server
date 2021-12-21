@@ -17,6 +17,7 @@ dependencies {
 
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.18-R0.1-SNAPSHOT") // For NMS development
     compileOnly "io.papermc.paper:paper-api:${project.lib_paper_version}"
+    implementation "cloud.commandframework:cloud-paper:${project.lib_cloud_version}"
 }
 
 tasks {

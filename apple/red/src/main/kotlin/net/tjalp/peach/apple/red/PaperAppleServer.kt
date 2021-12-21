@@ -1,5 +1,8 @@
 package net.tjalp.peach.apple.red
 
+import cloud.commandframework.CommandManager
+import cloud.commandframework.bukkit.BukkitCommandManager
+import cloud.commandframework.execution.CommandExecutionCoordinator
 import com.destroystokyo.paper.PaperConfig
 import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
@@ -10,6 +13,7 @@ import net.tjalp.peach.apple.red.listener.AppleEventListener
 import net.tjalp.peach.apple.red.scheduler.PaperAppleScheduler
 import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.peel.util.GsonHelper
+import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.charset.StandardCharsets
 
@@ -19,6 +23,9 @@ class PaperAppleServer : AppleServer() {
 
     private lateinit var globalScheduler: PaperAppleScheduler
     lateinit var plugin: Plugin
+    lateinit var bukkitCommandManager: BukkitCommandManager<CommandSender>
+    override val commandManager: CommandManager<out Any>
+        get() = bukkitCommandManager
 
     override val scheduler: AppleScheduler
         get() = globalScheduler
@@ -30,6 +37,13 @@ class PaperAppleServer : AppleServer() {
         config = GsonHelper.global().fromJson(System.getenv("NODE_CONFIG"), PaperAppleConfig::class.java)
 
         logger = plugin.slF4JLogger
+
+        bukkitCommandManager = BukkitCommandManager(
+            plugin,
+            CommandExecutionCoordinator.simpleCoordinator(),
+            java.util.function.Function.identity(),
+            java.util.function.Function.identity(),
+        )
     }
 
     override fun start() {

@@ -1,5 +1,6 @@
 package net.tjalp.peach.apple.pit
 
+import cloud.commandframework.CommandManager
 import io.grpc.ManagedChannel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -59,6 +60,11 @@ abstract class AppleServer {
      * The global scheduler
      */
     abstract val scheduler: AppleScheduler
+
+    /**
+     * The command manager of this apple node
+     */
+    abstract val commandManager: CommandManager<out Any>
 
     /**
      * Whether the [AppleServer] has been

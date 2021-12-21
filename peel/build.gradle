@@ -9,6 +9,8 @@ dependencies {
     api "com.google.protobuf:protobuf-kotlin:${project.lib_protobuf_kotlin_version}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.lib_kotlinx_version}"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${project.lib_kotlinx_version}"
+    api "cloud.commandframework:cloud-core:${project.lib_cloud_version}"
+    api "cloud.commandframework:cloud-kotlin-extensions:${project.lib_cloud_version}"
 }
 
 shadowJar.enabled = false
