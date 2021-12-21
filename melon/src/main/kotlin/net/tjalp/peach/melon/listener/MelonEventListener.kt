@@ -1,5 +1,6 @@
 package net.tjalp.peach.melon.listener
 
+import com.velocitypowered.api.event.EventTask
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
@@ -36,16 +37,18 @@ class MelonEventListener(
     }
 
     @Subscribe
-    private fun onLogin(event: LoginEvent) {
+    private fun onLogin(event: LoginEvent): EventTask {
         val request = Melon.PlayerHandshakeRequest.newBuilder()
             .setUniqueId(event.player.uniqueId.toString())
             .setUsername(event.player.username)
             .build()
 
-        runBlocking {
-            val response = melon.rpcStub.playerHandshake(request)
+        return EventTask.async {
+            runBlocking {
+                val response = melon.rpcStub.playerHandshake(request)
 
-            initialAppleNodeCache[event.player.uniqueId] = response.targetNodeIdentifier
+                initialAppleNodeCache[event.player.uniqueId] = response.targetNodeIdentifier
+            }
         }
     }
 
