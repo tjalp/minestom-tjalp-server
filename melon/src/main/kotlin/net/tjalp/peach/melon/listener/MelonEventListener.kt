@@ -70,13 +70,15 @@ class MelonEventListener(
     }
 
     @Subscribe
-    private fun onDisconnect(event: DisconnectEvent) {
+    private fun onDisconnect(event: DisconnectEvent): EventTask {
         val request = Melon.PlayerQuit.newBuilder()
             .setUniqueId(event.player.uniqueId.toString())
             .build()
 
-        GlobalScope.launch {
-            melon.rpcStub.playerDisconnect(request)
+        return EventTask.async {
+            runBlocking {
+                melon.rpcStub.playerDisconnect(request)
+            }
         }
     }
 }
