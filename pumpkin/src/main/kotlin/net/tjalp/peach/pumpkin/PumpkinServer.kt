@@ -1,6 +1,6 @@
 package net.tjalp.peach.pumpkin
 
-import net.tjalp.peach.peel.config.JsonConfig
+import net.tjalp.peach.peel.config.*
 import net.tjalp.peach.peel.database.RedisManager
 import net.tjalp.peach.peel.exception.FailedOperationException
 import net.tjalp.peach.peel.node.NodeType.*
@@ -95,10 +95,26 @@ class PumpkinServer {
                     "stop" -> shutdown()
                     "melon" -> dockerService.randomDockerNode().createNode(
                         type = MELON,
-                        port = 25565
+                        port = 25565,
+                        config = MelonConfig().apply {
+                            this.pumpkin = config.pumpkin
+                            this.redis = config.redis
+                        }
                     )
-                    "ag" -> dockerService.randomDockerNode().createNode(APPLE_GREEN)
-                    "ar" -> dockerService.randomDockerNode().createNode(APPLE_RED)
+                    "ag" -> dockerService.randomDockerNode().createNode(
+                        type = APPLE_GREEN,
+                        config = MinestomAppleConfig().apply {
+                            this.pumpkin = config.pumpkin
+                            this.redis = config.redis
+                        }
+                    )
+                    "ar" -> dockerService.randomDockerNode().createNode(
+                        type = APPLE_RED,
+                        config = PaperAppleConfig().apply {
+                            this.pumpkin = config.pumpkin
+                            this.redis = config.redis
+                        }
+                    )
                 }
             }
         }

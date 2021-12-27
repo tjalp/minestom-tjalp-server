@@ -1,8 +1,4 @@
-package net.tjalp.peach.apple.pit.config
-
-import net.tjalp.peach.peel.config.NodeConfig
-import net.tjalp.peach.peel.config.PumpkinDetails
-import net.tjalp.peach.peel.config.RedisDetails
+package net.tjalp.peach.peel.config
 
 abstract class AppleConfig : NodeConfig() {
 

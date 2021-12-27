@@ -3,11 +3,10 @@ package net.tjalp.peach.apple.red
 import com.destroystokyo.paper.PaperConfig
 import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
-import net.tjalp.peach.apple.pit.scheduler.ReactiveScheduler
 import net.tjalp.peach.apple.red.command.PeachCommand
-import net.tjalp.peach.apple.red.config.PaperAppleConfig
 import net.tjalp.peach.apple.red.listener.AppleEventListener
 import net.tjalp.peach.apple.red.scheduler.PaperAppleScheduler
+import net.tjalp.peach.peel.config.PaperAppleConfig
 import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.peel.util.GsonHelper
 import org.bukkit.plugin.java.JavaPlugin

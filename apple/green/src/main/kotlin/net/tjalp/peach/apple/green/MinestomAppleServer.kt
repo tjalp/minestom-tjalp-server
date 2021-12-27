@@ -1,11 +1,9 @@
 package net.tjalp.peach.apple.green
 
 import net.minestom.server.MinecraftServer
-import net.minestom.server.extras.MojangAuth
 import net.minestom.server.extras.velocity.VelocityProxy
 import net.minestom.server.instance.Instance
 import net.tjalp.peach.apple.green.command.*
-import net.tjalp.peach.apple.green.config.MinestomAppleConfig
 import net.tjalp.peach.apple.green.generator.SimpleGenerator
 import net.tjalp.peach.apple.green.listener.AppleEventListener
 import net.tjalp.peach.apple.green.old.command.GamemodeCommand
@@ -15,6 +13,7 @@ import net.tjalp.peach.apple.green.registry.registerDimensions
 import net.tjalp.peach.apple.green.scheduler.MinestomAppleScheduler
 import net.tjalp.peach.apple.pit.AppleServer
 import net.tjalp.peach.apple.pit.scheduler.AppleScheduler
+import net.tjalp.peach.peel.config.MinestomAppleConfig
 import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.peel.util.GsonHelper
 

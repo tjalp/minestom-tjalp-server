@@ -17,7 +17,7 @@ class RpcService(
 
     var active: Boolean = false; private set
     private var server: Server? = null
-    private val port: Int = pumpkin.config.port
+    private val port: Int = pumpkin.config.pumpkin.port
     private val builder: NettyServerBuilder = NettyServerBuilder.forPort(port)
     private val logger; get() = pumpkin.logger
     private val lock: Any = Any()

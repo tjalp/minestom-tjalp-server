@@ -3,6 +3,9 @@ package net.tjalp.peach.pumpkin.node.apple
 import com.google.protobuf.Empty
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
+import net.tjalp.peach.peel.config.MelonConfig
+import net.tjalp.peach.peel.config.MinestomAppleConfig
+import net.tjalp.peach.peel.config.PaperAppleConfig
 import net.tjalp.peach.peel.network.PeachRPC
 import net.tjalp.peach.peel.node.NodeType
 import net.tjalp.peach.proto.apple.Apple
@@ -92,12 +95,28 @@ class AppleService(
         val dockerNode = pumpkin.dockerService.randomDockerNode()
         val nodeId = if (request.nodeIdentifier.equals("")) null else request.nodeIdentifier
         val nodePort = if (request.nodePort == 0) null else request.nodePort
+        val config = when (type) {
+            NodeType.MELON -> MelonConfig().apply {
+                this.pumpkin = this@AppleService.pumpkin.config.pumpkin
+                this.redis = this@AppleService.pumpkin.config.redis
+            }
+            NodeType.APPLE_GREEN -> MinestomAppleConfig().apply {
+                this.pumpkin = this@AppleService.pumpkin.config.pumpkin
+                this.redis = this@AppleService.pumpkin.config.redis
+            }
+            NodeType.APPLE_RED -> PaperAppleConfig().apply {
+                this.pumpkin = this@AppleService.pumpkin.config.pumpkin
+                this.redis = this@AppleService.pumpkin.config.redis
+            }
+            else -> null
+        }
 
         val node = try {
             dockerNode.createNode(
                 type = type,
                 nodeId = nodeId,
-                port = nodePort
+                port = nodePort,
+                config = config
             )
         } catch (ex: Exception) {
             pumpkin.logger.error("An error occured while trying to create node: ${ex.message}")

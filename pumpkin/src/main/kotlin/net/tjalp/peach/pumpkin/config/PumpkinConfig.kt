@@ -2,14 +2,15 @@ package net.tjalp.peach.pumpkin.config
 
 import net.tjalp.peach.peel.config.Configurable
 import net.tjalp.peach.peel.config.DockerDetails
+import net.tjalp.peach.peel.config.PumpkinDetails
 import net.tjalp.peach.peel.config.RedisDetails
 
 class PumpkinConfig : Configurable {
 
     /**
-     * The port Pumpkin should listen on
+     * The pumpkin details
      */
-    var port: Int = 34040
+    var pumpkin = PumpkinDetails()
 
     /**
      * Redis connection instructions

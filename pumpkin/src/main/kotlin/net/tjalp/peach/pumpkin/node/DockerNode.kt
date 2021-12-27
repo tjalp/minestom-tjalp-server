@@ -87,7 +87,7 @@ class DockerNode(
             .withMemory(defMemory * 1_000_000)
             .withMemoryReservation(defMemory * 1_000_000)
             .withPortBindings(ports)
-            .withAutoRemove(true)
+            //.withAutoRemove(true)
             .withExtraHosts("host.docker.internal:host-gateway")
             .withNetworkMode("host") // TODO Not make this host
 
