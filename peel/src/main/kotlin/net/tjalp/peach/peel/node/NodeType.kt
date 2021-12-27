@@ -8,7 +8,6 @@ package net.tjalp.peach.peel.node
  * @param imageName The image name that should be used when creating a node of the current [NodeType]
  */
 enum class NodeType(val fullName: String, val shortName: String, val imageName: String) {
-    PUMPKIN("Pumpkin", "p", "pumpkin"),
     MELON("Melon", "m", "melon"),
     APPLE_GREEN("Apple Green", "ag", "apple-green"),
     APPLE_RED("Apple Red", "ar", "apple-red");

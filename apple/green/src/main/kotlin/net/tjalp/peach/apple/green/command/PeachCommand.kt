@@ -1,7 +1,6 @@
 package net.tjalp.peach.apple.green.command
 
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -14,6 +13,7 @@ import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.suggestion.Suggestion
 import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.tjalp.peach.apple.green.MinestomAppleServer
+import net.tjalp.peach.apple.pit.command.DOCKER_NODE
 import net.tjalp.peach.apple.pit.command.NODE_ID
 import net.tjalp.peach.apple.pit.command.NODE_PORT
 import net.tjalp.peach.apple.pit.command.NODE_TYPE
@@ -37,20 +37,23 @@ class PeachCommand(
         val stop = ArgumentType.Literal("stop")
         val kill = ArgumentType.Literal("kill")
         val nodeType = ArgumentType.Enum(NODE_TYPE, NodeType::class.java).setFormat(ArgumentEnum.Format.LOWER_CASED)
+        val dockerNode = ArgumentType.String(DOCKER_NODE).setDefaultValue(null)
         val nodeId = ArgumentType.String(NODE_ID).setDefaultValue(null)
         val nodePort = ArgumentType.Integer(NODE_PORT).setDefaultValue(null)
 
         // TODO The next few lines can probably be improved if ArgumentLoop in Minestom is fixed.
         // You can currently only create loops with a forced order, which is inconvenient and removes the entire point.
         addSyntax(this::executeNodeCreate, node, create, nodeType)
-        addSyntax(this::executeNodeCreate, node, create, nodeType, nodeId)
-        addSyntax(this::executeNodeCreate, node, create, nodeType, nodeId, nodePort)
+        addSyntax(this::executeNodeCreate, node, create, nodeType, dockerNode)
+        addSyntax(this::executeNodeCreate, node, create, nodeType, dockerNode, nodeId)
+        addSyntax(this::executeNodeCreate, node, create, nodeType, dockerNode, nodeId, nodePort)
         addSyntax(this::executeNodeStop, node, stop, nodeId.setSuggestionCallback(this::suggestNodeIdList))
         addSyntax(this::executeNodeKill, node, kill, nodeId.setSuggestionCallback(this::suggestNodeIdList))
     }
 
     private fun executeNodeCreate(sender: CommandSender, context: CommandContext) {
         val nodeType = context.get<NodeType>(NODE_TYPE)
+        val dockerNode = context.get<String>(DOCKER_NODE)
         val nodeId = context.get<String>(NODE_ID)
         val nodePort = context.get<Int>(NODE_PORT)
 
@@ -60,6 +63,7 @@ class PeachCommand(
             val request = Apple.CreateNodeRequest.newBuilder()
                 .setNodeType(nodeType.name)
 
+            if (dockerNode != null) request.dockerNode = dockerNode
             if (nodeId != null) request.nodeIdentifier = nodeId
             if (nodePort != null) request.nodePort = nodePort
 

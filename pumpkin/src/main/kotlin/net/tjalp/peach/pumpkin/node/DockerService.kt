@@ -32,4 +32,13 @@ class DockerService(
 
         return nodes.random()
     }
+
+    /**
+     * Get a [DockerNode] based on the identifier
+     *
+     * @return The docker node
+     */
+    fun getDockerNode(identifier: String): DockerNode? {
+        return nodes.firstOrNull { it.details.identifier == identifier }
+    }
 }

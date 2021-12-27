@@ -92,7 +92,7 @@ class AppleService(
         val type = NodeType.values().firstOrNull {
             it.name == request.nodeType.uppercase()
         } ?: return
-        val dockerNode = pumpkin.dockerService.randomDockerNode()
+        val dockerNode = pumpkin.dockerService.getDockerNode(request.dockerNode) ?: pumpkin.dockerService.randomDockerNode()
         val nodeId = if (request.nodeIdentifier.equals("")) null else request.nodeIdentifier
         val nodePort = if (request.nodePort == 0) null else request.nodePort
         val config = when (type) {
@@ -130,6 +130,7 @@ class AppleService(
 
         response.onNext(Apple.CreateNodeResponse.newBuilder()
             .setSuccess(true)
+            .setDockerNode(dockerNode.details.identifier)
             .setNodeIdentifier(node.nodeId)
             .setNodeType(node.nodeType.fullName)
             .build()

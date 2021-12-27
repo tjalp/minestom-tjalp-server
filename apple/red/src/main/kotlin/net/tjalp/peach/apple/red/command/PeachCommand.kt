@@ -17,6 +17,7 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.minecraft.commands.CommandSourceStack
+import net.tjalp.peach.apple.pit.command.DOCKER_NODE
 import net.tjalp.peach.apple.pit.command.NODE_ID
 import net.tjalp.peach.apple.pit.command.NODE_PORT
 import net.tjalp.peach.apple.pit.command.NODE_TYPE
@@ -47,13 +48,17 @@ class PeachCommand(
                 .then(literal<CommandSourceStack>("node")
                     .then(literal<CommandSourceStack>("create")
                         .then(argument<CommandSourceStack, String>(NODE_TYPE, string())
-                            .then(argument<CommandSourceStack, String>(NODE_ID, string())
-                                .then(argument<CommandSourceStack?, Int?>(NODE_PORT, integer())
+                            .then(argument<CommandSourceStack?, String?>(DOCKER_NODE, string())
+                                .then(argument<CommandSourceStack, String>(NODE_ID, string())
+                                    .then(argument<CommandSourceStack?, Int?>(NODE_PORT, integer())
+                                        .executes { context ->
+                                            this.executeNodeCreate(context, getString(context, DOCKER_NODE), getString(context, NODE_ID), getInteger(context, NODE_PORT))
+                                        })
                                     .executes { context ->
-                                        this.executeNodeCreate(context, getString(context, NODE_ID), getInteger(context, NODE_PORT))
+                                        this.executeNodeCreate(context, getString(context, DOCKER_NODE), getString(context, NODE_ID))
                                     })
                                 .executes { context ->
-                                    this.executeNodeCreate(context, getString(context, NODE_ID))
+                                    this.executeNodeCreate(context, getString(context, DOCKER_NODE))
                                 })
                             .suggests { _, builder ->
                                 val input = builder.remainingLowerCase
@@ -75,7 +80,7 @@ class PeachCommand(
         )
     }
 
-    private fun executeNodeCreate(context: CommandContext<CommandSourceStack>, nodeId: String? = null, nodePort: Int? = null): Int {
+    private fun executeNodeCreate(context: CommandContext<CommandSourceStack>, dockerNode: String? = null, nodeId: String? = null, nodePort: Int? = null): Int {
         val sender = context.source.bukkitSender
         val nodeType = getString(context, NODE_TYPE)
 
